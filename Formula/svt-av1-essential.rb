@@ -14,20 +14,20 @@ class SvtAv1Essential < Formula
   depends_on "nasm" => :build
 
   def install
-    args = %W[
-      -DCMAKE_BUILD_TYPE=Release
-      -DCMAKE_C_COMPILER=clang
-      -DCMAKE_CXX_COMPILER=clang++
-      -DBUILD_SHARED_LIBS=OFF
-      -DSVT_AV1_LTO=ON
-      -DENABLE_AVX512=OFF
-      -DENABLE_NEON_I8MM=OFF
-      -DBUILD_DEC=OFF
-      -DREPRODUCIBLE_BUILDS=ON
-      -DCMAKE_C_FLAGS_RELEASE=-O3\ -DNDEBUG
-      -DCMAKE_CXX_FLAGS_RELEASE=-O3\ -DNDEBUG
-      -DCMAKE_OSX_ARCHITECTURES=arm64
-      -DCMAKE_INSTALL_PREFIX=#{prefix}
+    args = [
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_C_COMPILER=clang",
+      "-DCMAKE_CXX_COMPILER=clang++",
+      "-DBUILD_SHARED_LIBS=OFF",
+      "-DSVT_AV1_LTO=ON",
+      "-DENABLE_AVX512=OFF",
+      "-DENABLE_NEON_I8MM=OFF",
+      "-DBUILD_DEC=OFF",
+      "-DREPRODUCIBLE_BUILDS=ON",
+      "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
+      "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG",
+      "-DCMAKE_OSX_ARCHITECTURES=arm64",
+      "-DCMAKE_INSTALL_PREFIX=#{prefix}",
     ]
 
     system "cmake", "-S", ".", "-B", "svt_build", *args
