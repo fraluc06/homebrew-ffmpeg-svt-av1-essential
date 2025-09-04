@@ -1,0 +1,48 @@
+name: auto-bump-formulae
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # daily at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  bump:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump svt-av1-essential
+        id: bump-svt
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tap: ${{ github.repository }}
+          formula: svt-av1-essential
+          livecheck: true
+          download: true
+          audit: true
+          strict: true
+          force: true
+          fork: false
+          labels: pr-pull
+
+      - name: Bump ffmpeg-custom
+        id: bump-ffmpeg
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tap: ${{ github.repository }}
+          formula: ffmpeg-custom
+          livecheck: true
+          download: true
+          audit: true
+          strict: true
+          force: true
+          fork: false
+          labels: pr-pull
