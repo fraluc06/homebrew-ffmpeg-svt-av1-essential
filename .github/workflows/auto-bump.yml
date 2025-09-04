@@ -1,48 +1,32 @@
-name: auto-bump-formulae
+name: Auto bump svt-av1-essential
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # daily at 06:00 UTC
+    - cron: '0 6 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-bump-svt-av1-essential
+  cancel-in-progress: false
 
 jobs:
   bump:
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      pull-requests: write
+    runs-on: ubuntu-22.04
     steps:
-      - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@main
+      - name: Bump svt-av1-essential via livecheck
+        uses: dawidd6/action-homebrew-bump-formula@v4
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_TAP_PAT }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Bump svt-av1-essential
-        id: bump-svt
-        uses: dawidd6/action-homebrew-bump-formula@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.HOMEBREW_TAP_PAT }}
           tap: ${{ github.repository }}
           formula: svt-av1-essential
           livecheck: true
-          download: true
-          audit: true
-          strict: true
-          force: true
-          fork: false
-          labels: pr-pull
-
-      - name: Bump ffmpeg-custom
-        id: bump-ffmpeg
-        uses: dawidd6/action-homebrew-bump-formula@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tap: ${{ github.repository }}
-          formula: ffmpeg-custom
-          livecheck: true
-          download: true
-          audit: true
-          strict: true
-          force: true
-          fork: false
-          labels: pr-pull
+          force: false
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          base: main
