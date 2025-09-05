@@ -1,4 +1,9 @@
 on:
+  workflow_dispatch:
+    inputs:
+      tag-name:
+        description: 'The git tag name to bump the formula to'
+        required: false
   push:
     tags: 'v*'
   # Alternatively, trigger this workflow after a stable release has been published:
@@ -17,8 +22,11 @@ jobs:
       - name: Extract version
         id: extract-version
         run: |
-          echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
-
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                echo "tag-name=${{ github.event.inputs.tag-name }}" >> "$GITHUB_OUTPUT"
+              else
+                echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+              fi
       - uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: svt-av1-essential
