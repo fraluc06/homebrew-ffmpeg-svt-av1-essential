@@ -23,7 +23,7 @@ jobs:
             echo "tag-name=${{ github.event.inputs.tag-name }}" >> "$GITHUB_OUTPUT"
           else
             echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
-
+            fi
       - name: Update svt-av1-essential formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
