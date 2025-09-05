@@ -18,11 +18,15 @@ jobs:
     steps:
       - name: Extract version
         id: extract-version
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_TAG: ${{ github.event.inputs.tag-name }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag-name=${{ github.event.inputs.tag-name }}" >> "$GITHUB_OUTPUT"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "tag-name=$WORKFLOW_TAG" >> "$GITHUB_OUTPUT"
           else
             echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Update ffmpeg-custom formula
         uses: mislav/bump-homebrew-formula-action@v3
