@@ -29,6 +29,7 @@ jobs:
           fi
 
       - name: Update ffmpeg-custom formula
+        id: update-ffmpeg-custom
         uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: ffmpeg-custom
@@ -41,3 +42,8 @@ jobs:
           download-url: https://ffmpeg.org/releases/${{ steps.extract-version.outputs.tag-name }}.tar.xz
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "${{ steps.update-ffmpeg-custom.outputs.pull-request-url }}"
+        env:
+          GH_TOKEN: ${{ secrets.COMMITTER_TOKEN }}

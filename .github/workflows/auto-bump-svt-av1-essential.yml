@@ -29,6 +29,7 @@ jobs:
           fi
 
       - name: Update svt-av1-essential formula
+        id: update-svt-av1-essential
         uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: svt-av1-essential
@@ -41,3 +42,8 @@ jobs:
           download-url: https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/${{ steps.extract-version.outputs.tag-name }}.tar.gz
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "${{ steps.update-svt-av1-essential.outputs.pull-request-url }}"
+        env:
+          GH_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
