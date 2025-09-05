@@ -1,0 +1,39 @@
+name: Bump ffmpeg-custom
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag-name:
+        description: 'The git tag name to bump ffmpeg-custom'
+        required: true
+  push:
+    tags: 'v*'
+
+jobs:
+  homebrew:
+    name: Bump ffmpeg-custom
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Extract version
+        id: extract-version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag-name=${{ github.event.inputs.tag-name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      - name: Update ffmpeg-custom formula
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: ffmpeg-custom
+          formula-path: Formula/ffmpeg-custom.rb
+          homebrew-tap: fraluc06/homebrew-ffmpeg-svt-av1-essential
+          base-branch: main
+          create-branch: true
+          create-pullrequest: true
+          tag-name: ${{ steps.extract-version.outputs.tag-name }}
+          download-url: https://ffmpeg.org/releases/${{ steps.extract-version.outputs.tag-name }}.tar.xz
+        env:
+          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
