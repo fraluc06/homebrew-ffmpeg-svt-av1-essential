@@ -16,7 +16,6 @@ jobs:
     steps:
       - name: Extract version
         id: extract-version
-        # Strip a string prefix from the git tag name:
         run: |
           echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
@@ -26,21 +25,25 @@ jobs:
           formula-path: Formula/svt-av1-essential.rb
           homebrew-tap: fraluc06/ffmpeg-svt-av1-essential
           base-branch: main
+          create-branch: true
+          create-pullrequest: true
           download-url: https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/${{ steps.extract-version.outputs.tag-name }}.tar.gz
-#          https://example.com/packages/myformula-${{ steps.extract-version.outputs.tag-name }}.tar.gz
+          download-sha256:
           commit-message: |
             {{formulaName}} {{version}}
 
             Created by https://github.com/mislav/bump-homebrew-formula-action
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: ffmpeg-custom
           formula-path: Formula/ffmpeg-custom.rb
           homebrew-tap: fraluc06/ffmpeg-svt-av1-essential
           base-branch: main
+          create-branch: true
+          create-pullrequest: true
           download-url: https://ffmpeg.org/releases/${{ steps.extract-version.outputs.tag-name }}.tar.xz
           commit-message: |
             {{formulaName}} {{version}}
@@ -48,4 +51,3 @@ jobs:
             Created by https://github.com/mislav/bump-homebrew-formula-action
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
-            # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
