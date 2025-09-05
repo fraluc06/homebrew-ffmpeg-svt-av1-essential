@@ -35,3 +35,17 @@ jobs:
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
           # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: ffmpeg-custom.rb
+          formula-path: Formula/ffmpeg-custom.rb
+          homebrew-tap: fraluc06/ffmpeg-svt-av1-essential
+          base-branch: main
+          download-url: https://ffmpeg.org/releases/${{ steps.extract-version.outputs.tag-name }}.tar.xz
+          commit-message: |
+            {{formulaName}} {{version}}
+            
+            Created by https://github.com/mislav/bump-homebrew-formula-action
+        env:
+          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+            # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
