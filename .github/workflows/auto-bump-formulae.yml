@@ -22,7 +22,7 @@ jobs:
 
       - uses: mislav/bump-homebrew-formula-action@v3
         with:
-          formula-name: svt-av1-essential.rb
+          formula-name: svt-av1-essential
           formula-path: Formula/svt-av1-essential.rb
           homebrew-tap: fraluc06/ffmpeg-svt-av1-essential
           base-branch: main
@@ -37,7 +37,7 @@ jobs:
           # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: mislav/bump-homebrew-formula-action@v3
         with:
-          formula-name: ffmpeg-custom.rb
+          formula-name: ffmpeg-custom
           formula-path: Formula/ffmpeg-custom.rb
           homebrew-tap: fraluc06/ffmpeg-svt-av1-essential
           base-branch: main
