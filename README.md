@@ -43,13 +43,13 @@ SVT-AV1 v3.1.2 (release)
 Verify that FFmpeg is using SVT-AV1-Essential:
 
 ```bash
-ffmpeg -encoders | grep svt
-```
-
+ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=10 \
+  -c:v libsvtav1 -preset 8 -crf 40 -y out.mkv -v verbose 2>&1 | grep SVT && rm -rf out.mkv
+  ```
 Expected output:
-
 ```
- V..... libsvtav1            SVT-AV1 Essential encoder
+Svt[info]: SVT [version]: SVT-AV1-Essential Encoder Lib v3.1.2
+Svt[info]: SVT [build]  : Apple LLVM 17.0.0 (clang-1700.0.13.5) 64 bit # or the version of clang you have installed
 ```
 
 ---
