@@ -31,7 +31,7 @@ jobs:
         with:
           formula-name: svt-av1-essential
           formula-path: Formula/svt-av1-essential.rb
-          homebrew-tap: fraluc06/ffmpeg-svt-av1-essential
+          homebrew-tap: fraluc06/homebrew-ffmpeg-svt-av1-essential
           base-branch: main
           create-branch: true
           create-pullrequest: true
