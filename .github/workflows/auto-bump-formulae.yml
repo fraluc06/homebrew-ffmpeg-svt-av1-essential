@@ -18,7 +18,7 @@ jobs:
         id: extract-version
         # Strip a string prefix from the git tag name:
         run: |
-          echo "tag-name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
       - uses: mislav/bump-homebrew-formula-action@v3
         with:
