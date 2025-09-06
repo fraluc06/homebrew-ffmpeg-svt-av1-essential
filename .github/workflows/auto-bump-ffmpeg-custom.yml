@@ -28,7 +28,7 @@ jobs:
             VERSION="${GITHUB_REF#refs/tags/}"
           fi
 
-          # rimuove eventuale prefisso "n" (es: n8.0 -> 8.0)
+          # Remove eventual prefix "n" (es: n8.0 -> 8.0)
           CLEAN_VERSION="${VERSION#n}"
 
           echo "raw-tag=$VERSION" >> "$GITHUB_OUTPUT"
@@ -48,8 +48,3 @@ jobs:
           download-url: https://github.com/FFmpeg/FFmpeg/archive/refs/tags/${{ steps.extract-version.outputs.raw-tag }}.tar.gz
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
-
-      - name: Enable Pull Request Automerge
-        run: gh pr merge --merge --auto "${{ steps.update-ffmpeg-custom.outputs.pull-request-url }}"
-        env:
-          GH_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
