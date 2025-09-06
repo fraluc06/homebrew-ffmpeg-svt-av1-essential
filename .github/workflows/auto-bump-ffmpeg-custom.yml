@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       tag-name:
-        description: 'The git tag name to bump ffmpeg-custom'
+        description: 'The git tag name to bump ffmpeg-custom (es: n8.0)'
         required: true
   push:
-    tags: 'v*'
+    tags: 'n*'
 
 jobs:
   homebrew:
@@ -23,10 +23,16 @@ jobs:
           WORKFLOW_TAG: ${{ github.event.inputs.tag-name }}
         run: |
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "tag-name=$WORKFLOW_TAG" >> "$GITHUB_OUTPUT"
+            VERSION="$WORKFLOW_TAG"
           else
-            echo "tag-name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+            VERSION="${GITHUB_REF#refs/tags/}"
           fi
+
+          # rimuove eventuale prefisso "n" (es: n8.0 -> 8.0)
+          CLEAN_VERSION="${VERSION#n}"
+
+          echo "raw-tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "clean-version=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Update ffmpeg-custom formula
         id: update-ffmpeg-custom
@@ -38,8 +44,8 @@ jobs:
           base-branch: main
           create-branch: true
           create-pullrequest: true
-          tag-name: ${{ steps.extract-version.outputs.tag-name }}
-          download-url: https://ffmpeg.org/releases/${{ steps.extract-version.outputs.tag-name }}.tar.xz
+          tag-name: ${{ steps.extract-version.outputs.clean-version }}
+          download-url: https://github.com/FFmpeg/FFmpeg/archive/refs/tags/${{ steps.extract-version.outputs.raw-tag }}.tar.gz
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
 
