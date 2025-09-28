@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag-name:
-        description: 'The git tag name to bump svt-av1-essential'
+        description: 'The git tag name to bump svt-av1-essential (es: v3.1.2-Essential)'
         required: true
   push:
     tags: 'v*'
