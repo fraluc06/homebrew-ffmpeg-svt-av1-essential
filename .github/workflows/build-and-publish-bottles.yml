@@ -24,6 +24,7 @@ jobs:
   build-bottles:
     name: Build bottles
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-22.04, macos-13, macos-14, macos-15]
     runs-on: ${{ matrix.os }}
@@ -76,7 +77,11 @@ jobs:
       - name: Cleanup before post-job
         if: always()
         run: |
-          brew uninstall fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} --ignore-dependencies || true
+          # Uninstall formula if it was installed
+          if brew list fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} &>/dev/null; then
+            brew uninstall fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} --ignore-dependencies
+          fi
+          # Untap if it exists
           brew untap fraluc06/ffmpeg-svt-av1-essential || true
 
   update-formula:
