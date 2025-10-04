@@ -54,7 +54,10 @@ jobs:
           # Tap this repository locally
           brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
-          # Install formula for bottling (dependencies will be built from source if needed)
+          # Install build dependencies from source (cmake, nasm, etc)
+          brew deps --include-build fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} | xargs -n1 brew install --build-from-source || true
+
+          # Install formula for bottling
           brew install --build-bottle fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
 
           # Create bottle
@@ -69,6 +72,10 @@ jobs:
             *.bottle.*
             *.json
           retention-days: 1
+
+      - name: Cleanup tap
+        if: always()
+        run: brew untap fraluc06/ffmpeg-svt-av1-essential || true
 
   update-formula:
     name: Update formula with bottle blocks
