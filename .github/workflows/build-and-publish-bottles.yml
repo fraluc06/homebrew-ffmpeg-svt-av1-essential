@@ -49,11 +49,8 @@ jobs:
 
       - name: Build bottle
         run: |
-          # Remove existing tap if present
-          brew untap fraluc06/ffmpeg-svt-av1-essential 2>/dev/null || true
-
-          # Tap this repository locally
-          brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+          # Tap this repository locally (force overwrites existing tap symlink)
+          brew tap --force fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
           # Install build dependencies from source (cmake, nasm, etc)
           brew deps --include-build fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} | xargs -n1 brew install --build-from-source || true
