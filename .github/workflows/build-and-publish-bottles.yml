@@ -54,10 +54,7 @@ jobs:
           # Tap this repository locally
           brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
-          # Install build dependencies from source (cmake, nasm, etc)
-          brew install --build-from-source $(brew deps --include-build fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}) || true
-
-          # Install formula with --build-bottle (relocatable)
+          # Install formula for bottling (dependencies will be built from source if needed)
           brew install --build-bottle fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
 
           # Create bottle
