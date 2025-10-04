@@ -83,6 +83,8 @@ jobs:
           fi
           # Untap if it exists
           brew untap fraluc06/ffmpeg-svt-av1-essential || true
+          # Recreate empty directory for post-job cleanup (prevents rm error)
+          mkdir -p "$(brew --repository)/Library/Taps/fraluc06/homebrew-ffmpeg-svt-av1-essential" || true
 
   update-formula:
     name: Update formula with bottle blocks
