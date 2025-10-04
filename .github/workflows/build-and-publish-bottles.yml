@@ -77,14 +77,10 @@ jobs:
       - name: Cleanup before post-job
         if: always()
         run: |
-          # Uninstall formula if it was installed
+          # Uninstall formula if it was installed (leave tap for post-job cleanup)
           if brew list fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} &>/dev/null; then
             brew uninstall fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} --ignore-dependencies
           fi
-          # Untap if it exists
-          brew untap fraluc06/ffmpeg-svt-av1-essential || true
-          # Recreate empty directory for post-job cleanup (prevents rm error)
-          mkdir -p "$(brew --repository)/Library/Taps/fraluc06/homebrew-ffmpeg-svt-av1-essential" || true
 
   update-formula:
     name: Update formula with bottle blocks
