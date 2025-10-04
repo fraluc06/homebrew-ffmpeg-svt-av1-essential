@@ -46,10 +46,13 @@ jobs:
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
 
-      - name: Tap repository and build bottle
+      - name: Build bottle
         run: |
+          # Remove existing tap if present
+          brew untap fraluc06/ffmpeg-svt-av1-essential 2>/dev/null || true
+
           # Tap this repository locally
-          brew tap --force fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+          brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
           # Build formula from source with bottle support
           brew install --build-bottle --formula fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
