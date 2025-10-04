@@ -54,10 +54,10 @@ jobs:
           # Tap this repository locally
           brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
-          # Build formula from source with bottle support
-          brew install --build-bottle --formula fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+          # Install dependencies (allow building from source if needed)
+          brew install --build-from-source --formula fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
 
-          # Create bottle
+          # Create bottle from the installed formula
           brew bottle --json --only-json-tab fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
 
       - name: Upload bottles as artifact
