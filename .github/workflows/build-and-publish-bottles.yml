@@ -34,23 +34,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Cache Homebrew Bundler RubyGems
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ matrix.os }}-rubygems-
+      - name: Set up Homebrew on Linux
+        if: runner.os == 'Linux'
+        run: |
+          # Add Homebrew to PATH on Linux (already installed, just not in PATH)
+          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
       - name: Build bottle
         run: |
-          # Tap this repository locally (force overwrites existing tap symlink)
-          brew tap --force fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+          # Tap this repository locally
+          brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
           # Install build dependencies from source (cmake, nasm, etc)
           brew deps --include-build fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} | xargs -n1 brew install --build-from-source || true
