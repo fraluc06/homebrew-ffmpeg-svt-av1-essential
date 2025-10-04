@@ -25,7 +25,7 @@ jobs:
     name: Build bottles
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13, macos-14, macos-15]
+        os: [ubuntu-22.04, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
