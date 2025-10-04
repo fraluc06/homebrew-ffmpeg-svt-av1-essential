@@ -74,14 +74,6 @@ jobs:
             *.json
           retention-days: 1
 
-      - name: Cleanup before post-job
-        if: always()
-        run: |
-          # Uninstall formula if it was installed (leave tap for post-job cleanup)
-          if brew list fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} &>/dev/null; then
-            brew uninstall fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} --ignore-dependencies
-          fi
-
   update-formula:
     name: Update formula with bottle blocks
     needs: build-bottles
