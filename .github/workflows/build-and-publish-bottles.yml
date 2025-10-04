@@ -98,6 +98,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Create and checkout new branch
+        env:
+          BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}
+        run: |
+          git checkout -b "$BRANCH_NAME"
+
       - name: Merge bottle JSON into formula
         run: |
           cd bottles
@@ -106,12 +112,18 @@ jobs:
             brew bottle --merge --write "$json"
           done
 
-      - name: Create branch and commit formula changes
+      - name: Squash commits and push
         env:
           BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}
         run: |
-          git checkout -b "$BRANCH_NAME"
-          git add Formula/${{ inputs.formula }}.rb
+          # Count commits made by brew bottle --merge
+          COMMIT_COUNT=$(git rev-list --count main.."$BRANCH_NAME")
+          echo "Squashing $COMMIT_COUNT commits into one..."
+
+          # Soft reset to combine all commits into staging
+          git reset --soft HEAD~${COMMIT_COUNT}
+
+          # Create single commit with all bottle changes
           git commit -m "Add bottles for ${{ inputs.formula }} - ${{ inputs.tag }}
 
           Bottles built for:
@@ -120,7 +132,8 @@ jobs:
           - macOS 15 (Sequoia)
           - Ubuntu 22.04
 
-          🤖 Generated with GitHub Actions" || echo "No changes to commit"
+          🤖 Generated with GitHub Actions"
+
           git push -u origin "$BRANCH_NAME"
 
       - name: Create Pull Request
