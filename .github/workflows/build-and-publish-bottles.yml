@@ -92,6 +92,11 @@ jobs:
       - name: Display downloaded files
         run: ls -lah bottles/
 
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Merge bottle JSON into formula
         run: |
           cd bottles
@@ -99,11 +104,6 @@ jobs:
             echo "Merging $json into formula..."
             brew bottle --merge --write "$json"
           done
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Create branch and commit formula changes
         env:
