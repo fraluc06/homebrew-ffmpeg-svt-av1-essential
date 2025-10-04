@@ -25,11 +25,14 @@ jobs:
     name: Build bottles
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13, macos-15]
+        os: [ubuntu-22.04, macos-13, macos-14, macos-15]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
@@ -43,11 +46,16 @@ jobs:
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
 
-      - name: Run brew test-bot
+      - name: Tap repository and build bottle
         run: |
-          brew test-bot --only-cleanup-before
-          brew test-bot --only-setup
-          brew test-bot --only-formulae --only-json-tab --skip-recursive-dependents
+          # Tap this repository locally
+          brew tap --force fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+
+          # Build formula from source with bottle support
+          brew install --build-bottle --formula fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+
+          # Create bottle
+          brew bottle --json --only-json-tab fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
 
       - name: Upload bottles as artifact
         if: always()
