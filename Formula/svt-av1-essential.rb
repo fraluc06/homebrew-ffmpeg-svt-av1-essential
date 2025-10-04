@@ -26,7 +26,6 @@ class SvtAv1Essential < Formula
       "-DREPRODUCIBLE_BUILDS=ON",
       "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
       "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG",
-      "-DCMAKE_OSX_ARCHITECTURES=arm64",
       "-DCMAKE_INSTALL_PREFIX=#{prefix}",
     ]
 
