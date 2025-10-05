@@ -12,6 +12,15 @@ class FfmpegCustom < Formula
     regex(/^n?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    rebuild 1
+    sha256 arm64_tahoe:   "062387bff30610030161a64f64823b82f961261bd015c6b4578dd395367dd7a5"
+    sha256 arm64_sequoia: "0411d1c1ba635d1b37ff76dd61485a5b92c031ef2060cf034ed227aa603e15d2"
+    sha256 arm64_sonoma:  "4bc564620212c0ecf9ca4ed0eb69a9a7eb98c3036b166afc598025e30ef48cc2"
+    sha256 ventura:       "251b60089f1cf6b67f69cbbe157a102f8e82e11140674983467005dcc5664945"
+    sha256 x86_64_linux:  "645c04f30f87ccb162bc637a1aa3014628d36f4d619c1a6ae492e28f0017a399"
+  end
+
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
