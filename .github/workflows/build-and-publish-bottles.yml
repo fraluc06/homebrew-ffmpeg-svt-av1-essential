@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-13, macos-14, macos-15]
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-13, macos-14, macos-15, macos-26]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -186,7 +186,9 @@ jobs:
           - macOS 13 (Ventura)
           - macOS 14 (Sonoma)
           - macOS 15 (Sequoia)
-          - Ubuntu 22.04
+          - macOS 26 (Tahoe)
+          - Ubuntu 24.04 (x86_64)
+          - Ubuntu 24.04 (ARM64)
 
           🤖 Generated with GitHub Actions"
 
@@ -213,7 +215,9 @@ jobs:
           - macOS 13 (Ventura)
           - macOS 14 (Sonoma)
           - macOS 15 (Sequoia)
-          - Ubuntu 22.04
+          - macOS 26 (Tahoe)
+          - Ubuntu 24.04 (x86_64)
+          - Ubuntu 24.04 (ARM64)
 
           ### Changes
           - Updated \`Formula/${{ inputs.formula }}.rb\` with bottle blocks and SHA256 hashes
@@ -296,7 +300,9 @@ jobs:
           - macOS 13 (Ventura)
           - macOS 14 (Sonoma)
           - macOS 15 (Sequoia)
-          - Ubuntu 22.04
+          - macOS 26 (Tahoe)
+          - Ubuntu 24.04 (x86_64)
+          - Ubuntu 24.04 (ARM64)
 
           **Installation:**
           After the corresponding PR is merged, install with:
