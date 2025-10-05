@@ -145,10 +145,10 @@ jobs:
 
           # List all JSON files to merge
           echo "Merging bottle JSONs into formula with root_url: $ROOT_URL"
-          ls -1 *.json
+          ls -1 ./*.json
 
           # Merge all JSONs at once to preserve all bottles
-          if ! brew bottle --merge --write --root-url="$ROOT_URL" *.json; then
+          if ! brew bottle --merge --write --root-url="$ROOT_URL" ./*.json; then
             echo "Error: Failed to merge bottle JSONs"
             exit 1
           fi
