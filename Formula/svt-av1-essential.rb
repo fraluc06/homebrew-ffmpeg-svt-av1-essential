@@ -12,12 +12,12 @@ class SvtAv1Essential < Formula
 
   bottle do
     root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/v3.1.2-bottles"
-    rebuild 2
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "48d79dca1b3fd8fdc0f4acc9986aa3fb11b138804c95e6d1563ea1cf51025aab"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4c88907d398a3e86cc17c2a2622085c05714b7e3b2e3ecde50d1a7834cbe4692"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "fbeefbcb21da01ef73d3e3caa0b7fe5686a1ea45d0742ca8f63a28ae16b456f9"
-    sha256 cellar: :any_skip_relocation, ventura:       "3ea8ac638e629c2f64ea557d1ef76395f9f4cd2f337d70e97436c591411c8d7b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9b26043ea18c1419de275dfb03fe91b10cd474b34c93a3b27fce3d33d4fe2ef8"
+    rebuild 3
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "2936d75ce886792d0167d85a4fb5eb22be07b8ae73ae89c41bbde4f0af53bf58"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "fc885ee50b11af191a0f1e5806c1a5ee05dc3a9576b7122f350761e77e9a6d92"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "200944d674f3cb4fb1cea190ced1c90ae0366cd80725b1aa0a7e5bdcba993a00"
+    sha256 cellar: :any_skip_relocation, ventura:       "5248642df91b4ec58e55945b9ab6a77c40eec91db485ac846b076d9de091d7c2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "19a3aaddd311d9bfec35badc67e96cbd961a27aa7871e902f27ff20ab8174631"
   end
 
   depends_on "cmake" => :build
