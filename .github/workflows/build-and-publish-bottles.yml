@@ -77,11 +77,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Homebrew on Linux
+        run: |
+          # Add Homebrew to PATH on Linux (already installed, just not in PATH)
+          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
       - name: Download all bottle artifacts
         uses: actions/download-artifact@v4
