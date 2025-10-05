@@ -111,11 +111,6 @@ jobs:
           echo "Contents:"
           ls -lah bottles/
 
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Create and checkout new branch
         env:
           BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}
@@ -129,6 +124,12 @@ jobs:
 
           # Tap local workspace
           brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+
+      - name: Configure Git
+        run: |
+          # Configure globally for Homebrew operations
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Merge bottle JSON into formula
         env:
