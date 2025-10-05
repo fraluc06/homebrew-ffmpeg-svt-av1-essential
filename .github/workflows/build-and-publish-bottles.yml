@@ -153,6 +153,15 @@ jobs:
 
           cd ..
 
+      - name: Copy updated formula from tap to workspace
+        run: |
+          # Get tap path
+          TAP_PATH=$(brew --repository fraluc06/ffmpeg-svt-av1-essential)
+          echo "Tap path: $TAP_PATH"
+
+          # Copy updated formula back to workspace
+          cp "$TAP_PATH/Formula/${{ inputs.formula }}.rb" Formula/${{ inputs.formula }}.rb
+
           # Verify formula contains bottle block
           echo "Verifying formula was updated..."
           if grep -q "bottle do" Formula/${{ inputs.formula }}.rb; then
@@ -164,11 +173,24 @@ jobs:
             exit 1
           fi
 
-      - name: Push changes
+      - name: Commit and push changes
         env:
           BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}
         run: |
-          # Push branch with commits made by brew bottle --merge
+          # Commit the updated formula
+          git add Formula/${{ inputs.formula }}.rb
+
+          git commit -m "Add bottles for ${{ inputs.formula }} - ${{ inputs.tag }}
+
+          Bottles built for:
+          - macOS 13 (Ventura)
+          - macOS 14 (Sonoma)
+          - macOS 15 (Sequoia)
+          - Ubuntu 22.04
+
+          🤖 Generated with GitHub Actions"
+
+          # Push branch
           git push -u origin "$BRANCH_NAME"
 
       - name: Create Pull Request
