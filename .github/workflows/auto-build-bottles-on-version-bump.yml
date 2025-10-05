@@ -1,0 +1,74 @@
+name: Auto-build bottles on version bump
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  trigger-bottle-build:
+    name: Trigger bottle build if version bumped
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect formula changes and trigger bottle build
+        env:
+          GH_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "PR was merged: $PR_TITLE"
+
+          # Check if svt-av1-essential was bumped
+          if echo "$PR_TITLE" | grep -qi "svt-av1-essential"; then
+            echo "Detected svt-av1-essential version bump"
+
+            # Extract version from formula
+            VERSION=$(grep -m1 "url.*SVT-AV1-Essential/archive" Formula/svt-av1-essential.rb | sed -n 's/.*tags\/v\([^"]*\)\.tar\.gz.*/\1/p')
+            echo "Found version: $VERSION"
+
+            if [ -n "$VERSION" ]; then
+              # Create bottle tag (remove -Essential suffix if present)
+              BOTTLE_TAG="v${VERSION%-Essential}-bottles"
+              echo "Triggering bottle build for tag: $BOTTLE_TAG"
+
+              gh workflow run build-and-publish-bottles.yml \
+                --repo fraluc06/homebrew-ffmpeg-svt-av1-essential \
+                --ref main \
+                -f formula=svt-av1-essential \
+                -f tag="$BOTTLE_TAG" \
+                -f update-formula=true
+            else
+              echo "Could not extract version from formula"
+            fi
+          fi
+
+          # Check if ffmpeg-custom was bumped
+          if echo "$PR_TITLE" | grep -qi "ffmpeg"; then
+            echo "Detected ffmpeg-custom version bump"
+
+            # Extract version from formula
+            VERSION=$(grep -m1 "url.*FFmpeg/archive" Formula/ffmpeg-custom.rb | sed -n 's/.*tags\/n\?\([^"]*\)\.tar\.gz.*/\1/p')
+            echo "Found version: $VERSION"
+
+            if [ -n "$VERSION" ]; then
+              BOTTLE_TAG="v${VERSION}-bottles"
+              echo "Triggering bottle build for tag: $BOTTLE_TAG"
+
+              gh workflow run build-and-publish-bottles.yml \
+                --repo fraluc06/homebrew-ffmpeg-svt-av1-essential \
+                --ref main \
+                -f formula=ffmpeg-custom \
+                -f tag="$BOTTLE_TAG" \
+                -f update-formula=true
+            else
+              echo "Could not extract version from formula"
+            fi
+          fi
+
+          echo "No formula version bump detected or workflow triggered successfully"
