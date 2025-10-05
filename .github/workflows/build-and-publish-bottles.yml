@@ -177,8 +177,7 @@ jobs:
             # Check if root_url is missing and add it
             if ! grep -q "root_url" Formula/${{ inputs.formula }}.rb; then
               echo "⚠️  root_url missing, adding it..."
-              sed -i.bak '/bottle do/a\
-    root_url "'"$ROOT_URL"'"' Formula/${{ inputs.formula }}.rb
+              sed -i.bak "/bottle do/a\\    root_url \"$ROOT_URL\"" Formula/${{ inputs.formula }}.rb
               rm -f Formula/${{ inputs.formula }}.rb.bak
             fi
 
