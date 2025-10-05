@@ -10,6 +10,11 @@ class SvtAv1Essential < Formula
     regex(/^v?(\d+(?:\.\d+)+-Essential)$/i)
   end
 
+  bottle do
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "2022935f248ed4aa16669263f31d746674093280f20b2e675293a2921aed6afd"
+  end
+
   depends_on "cmake" => :build
   depends_on "nasm" => :build
 
