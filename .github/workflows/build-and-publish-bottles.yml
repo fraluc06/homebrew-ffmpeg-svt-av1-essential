@@ -153,55 +153,22 @@ jobs:
 
           cd ..
 
-          # Verify formula was modified and contains bottle block
-          if ! git diff --quiet Formula/${{ inputs.formula }}.rb; then
-            echo "Formula successfully updated"
-            echo "Checking for bottle block..."
-
-            if grep -q "bottle do" Formula/${{ inputs.formula }}.rb; then
-              echo "✓ Bottle block found in formula"
-              echo "Bottle block content:"
-              sed -n '/bottle do/,/^  end$/p' Formula/${{ inputs.formula }}.rb
-            else
-              echo "Warning: No bottle block found in formula"
-            fi
-
-            echo ""
-            echo "Full diff:"
-            git diff Formula/${{ inputs.formula }}.rb
+          # Verify formula contains bottle block
+          echo "Verifying formula was updated..."
+          if grep -q "bottle do" Formula/${{ inputs.formula }}.rb; then
+            echo "✓ Bottle block found in formula"
+            echo "Bottle block content:"
+            sed -n '/bottle do/,/^  end$/p' Formula/${{ inputs.formula }}.rb
           else
-            echo "Error: Formula was not modified by bottle merge"
+            echo "Error: No bottle block found in formula after merge"
             exit 1
           fi
 
-      - name: Squash commits and push
+      - name: Push changes
         env:
           BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}
         run: |
-          # Count commits made by brew bottle --merge
-          COMMIT_COUNT=$(git rev-list --count "main..$BRANCH_NAME")
-
-          if [ "$COMMIT_COUNT" -eq 0 ]; then
-            echo "Error: No commits to squash"
-            exit 1
-          fi
-
-          echo "Squashing $COMMIT_COUNT commits into one..."
-
-          # Soft reset to combine all commits into staging
-          git reset --soft "HEAD~${COMMIT_COUNT}"
-
-          # Create single commit with all bottle changes
-          git commit -m "Add bottles for ${{ inputs.formula }} - ${{ inputs.tag }}
-
-          Bottles built for:
-          - macOS 13 (Ventura)
-          - macOS 14 (Sonoma)
-          - macOS 15 (Sequoia)
-          - Ubuntu 22.04
-
-          🤖 Generated with GitHub Actions"
-
+          # Push branch with commits made by brew bottle --merge
           git push -u origin "$BRANCH_NAME"
 
       - name: Create Pull Request
