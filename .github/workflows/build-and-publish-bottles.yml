@@ -124,6 +124,10 @@ jobs:
 
       - name: Tap repository locally
         run: |
+          # Remove existing tap if present
+          brew untap fraluc06/ffmpeg-svt-av1-essential 2>/dev/null || true
+
+          # Tap local workspace
           brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
 
       - name: Merge bottle JSON into formula
@@ -238,7 +242,9 @@ jobs:
   publish-bottles:
     name: Publish bottles to release
     needs: [build-bottles, update-formula]
-    if: always() && needs.build-bottles.result == 'success'
+    if: |
+      needs.build-bottles.result == 'success' &&
+      (needs.update-formula.result == 'success' || needs.update-formula.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
       contents: write
