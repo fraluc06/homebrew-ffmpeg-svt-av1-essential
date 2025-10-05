@@ -155,6 +155,25 @@ jobs:
 
           cd ..
 
+          # Get tap path where brew made changes
+          TAP_PATH=$(brew --repository fraluc06/ffmpeg-svt-av1-essential)
+          FORMULA_PATH="$TAP_PATH/Formula/${{ inputs.formula }}.rb"
+
+          # Update or add root_url in bottle block
+          if grep -q "root_url" "$FORMULA_PATH"; then
+            echo "Updating existing root_url to: $ROOT_URL"
+            # Replace existing root_url with new one
+            sed -i.bak 's|root_url ".*"|root_url "'"$ROOT_URL"'"|' "$FORMULA_PATH"
+            rm -f "$FORMULA_PATH.bak"
+          else
+            echo "Adding root_url to bottle block..."
+            # Insert root_url after "bottle do" line
+            sed -i.bak '/bottle do/a\
+    root_url "'"$ROOT_URL"'"
+' "$FORMULA_PATH"
+            rm -f "$FORMULA_PATH.bak"
+          fi
+
       - name: Copy formula from tap and push
         env:
           BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}

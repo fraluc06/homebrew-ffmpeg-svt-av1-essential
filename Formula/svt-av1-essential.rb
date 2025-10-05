@@ -11,6 +11,7 @@ class SvtAv1Essential < Formula
   end
 
   bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/v3.1.2-bottles"
     rebuild 2
     sha256 cellar: :any_skip_relocation, arm64_tahoe:   "48d79dca1b3fd8fdc0f4acc9986aa3fb11b138804c95e6d1563ea1cf51025aab"
     sha256 cellar: :any_skip_relocation, arm64_sequoia: "4c88907d398a3e86cc17c2a2622085c05714b7e3b2e3ecde50d1a7834cbe4692"
