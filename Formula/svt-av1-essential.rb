@@ -11,12 +11,12 @@ class SvtAv1Essential < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "e6014e6ec95994800b4e4fa0f048551af934776640f9dfa52607a6c20aae4779"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "da1620bd80265abcae627a97af5336fd3afb0687f798923138030e790d9a6274"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b81a842fd710d29b2063230fdd77012e2953db892257771168d5b3f46bc05284"
-    sha256 cellar: :any_skip_relocation, ventura:       "f902700d3d16f68c67a3e8505cc81392ca0f7390116b048f9ec43bcbae9e8f0b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "35fd05d292ccea2f88d3deff51c78a8ed0ca3dfd7b1178aa0a0fafa08c0fa941"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "48d79dca1b3fd8fdc0f4acc9986aa3fb11b138804c95e6d1563ea1cf51025aab"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4c88907d398a3e86cc17c2a2622085c05714b7e3b2e3ecde50d1a7834cbe4692"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "fbeefbcb21da01ef73d3e3caa0b7fe5686a1ea45d0742ca8f63a28ae16b456f9"
+    sha256 cellar: :any_skip_relocation, ventura:       "3ea8ac638e629c2f64ea557d1ef76395f9f4cd2f337d70e97436c591411c8d7b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9b26043ea18c1419de275dfb03fe91b10cd474b34c93a3b27fce3d33d4fe2ef8"
   end
 
   depends_on "cmake" => :build
