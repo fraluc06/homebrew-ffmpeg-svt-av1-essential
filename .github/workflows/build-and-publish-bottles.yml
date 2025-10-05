@@ -131,9 +131,9 @@ jobs:
           ROOT_URL: https://github.com/${{ github.repository }}/releases/download/${{ inputs.tag }}
         run: |
           cd bottles
-          json_files=$(ls *.json 2>/dev/null || echo "")
 
-          if [ -z "$json_files" ]; then
+          # Check if there are any JSON files
+          if ! compgen -G "*.json" > /dev/null; then
             echo "Error: No JSON files to merge"
             exit 1
           fi
@@ -174,7 +174,7 @@ jobs:
           BRANCH_NAME: bottles/${{ inputs.formula }}-${{ inputs.tag }}
         run: |
           # Count commits made by brew bottle --merge
-          COMMIT_COUNT=$(git rev-list --count main.."$BRANCH_NAME")
+          COMMIT_COUNT=$(git rev-list --count "main..$BRANCH_NAME")
 
           if [ "$COMMIT_COUNT" -eq 0 ]; then
             echo "Error: No commits to squash"
@@ -184,7 +184,7 @@ jobs:
           echo "Squashing $COMMIT_COUNT commits into one..."
 
           # Soft reset to combine all commits into staging
-          git reset --soft HEAD~${COMMIT_COUNT}
+          git reset --soft "HEAD~${COMMIT_COUNT}"
 
           # Create single commit with all bottle changes
           git commit -m "Add bottles for ${{ inputs.formula }} - ${{ inputs.tag }}
