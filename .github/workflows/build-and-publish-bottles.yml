@@ -190,8 +190,8 @@ jobs:
 
           🤖 Generated with GitHub Actions"
 
-          # Push branch
-          git push -u origin "$BRANCH_NAME"
+          # Force push branch (in case it exists from previous run)
+          git push -f -u origin "$BRANCH_NAME"
 
       - name: Create Pull Request
         env:
