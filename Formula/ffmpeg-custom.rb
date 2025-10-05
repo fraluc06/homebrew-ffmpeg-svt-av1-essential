@@ -13,7 +13,7 @@ class FfmpegCustom < Formula
   end
 
   bottle do
-    rebuild 1
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-v8.0-bottles"
     sha256 arm64_tahoe:   "062387bff30610030161a64f64823b82f961261bd015c6b4578dd395367dd7a5"
     sha256 arm64_sequoia: "0411d1c1ba635d1b37ff76dd61485a5b92c031ef2060cf034ed227aa603e15d2"
     sha256 arm64_sonoma:  "4bc564620212c0ecf9ca4ed0eb69a9a7eb98c3036b166afc598025e30ef48cc2"

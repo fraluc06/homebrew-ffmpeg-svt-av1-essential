@@ -159,6 +159,7 @@ jobs:
         env:
           BRANCH_NAME: bottles/${{ inputs.formula }}-v${{ inputs.version }}-bottles
           TAG_NAME: ${{ inputs.formula }}-v${{ inputs.version }}-bottles
+          ROOT_URL: https://github.com/${{ github.repository }}/releases/download/${{ inputs.formula }}-v${{ inputs.version }}-bottles
         run: |
           # Get tap path where brew made changes
           TAP_PATH=$(brew --repository fraluc06/ffmpeg-svt-av1-essential)
@@ -172,6 +173,22 @@ jobs:
           echo "Verifying formula was updated..."
           if grep -q "bottle do" Formula/${{ inputs.formula }}.rb; then
             echo "✓ Bottle block found in formula"
+
+            # Check if root_url is missing and add it
+            if ! grep -q "root_url" Formula/${{ inputs.formula }}.rb; then
+              echo "⚠️  root_url missing, adding it..."
+              sed -i.bak '/bottle do/a\
+    root_url "'"$ROOT_URL"'"' Formula/${{ inputs.formula }}.rb
+              rm -f Formula/${{ inputs.formula }}.rb.bak
+            fi
+
+            # Remove rebuild line to avoid numbered bottle files
+            if grep -q "rebuild" Formula/${{ inputs.formula }}.rb; then
+              echo "⚠️  Removing rebuild number..."
+              sed -i.bak '/^[[:space:]]*rebuild /d' Formula/${{ inputs.formula }}.rb
+              rm -f Formula/${{ inputs.formula }}.rb.bak
+            fi
+
             echo "Bottle block content:"
             sed -n '/bottle do/,/^  end$/p' Formula/${{ inputs.formula }}.rb
           else
@@ -267,6 +284,16 @@ jobs:
           for file in *--*.bottle.*.tar.gz; do
             if [ -f "$file" ]; then
               newname="${file/--/-}"
+              echo "Renaming: $file -> $newname"
+              mv "$file" "$newname"
+            fi
+          done
+
+          # Remove rebuild number from bottle filenames (e.g., .bottle.1.tar.gz -> .bottle.tar.gz)
+          echo "Removing rebuild numbers from bottle filenames..."
+          for file in *.bottle.[0-9]*.tar.gz; do
+            if [ -f "$file" ]; then
+              newname=$(echo "$file" | sed -E 's/\.bottle\.[0-9]+/.bottle/')
               echo "Renaming: $file -> $newname"
               mv "$file" "$newname"
             fi
