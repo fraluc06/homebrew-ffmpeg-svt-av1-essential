@@ -6,22 +6,16 @@ This Homebrew tap provides formulas to install **SVT-AV1-Essential** and a custo
 
 ## Installation
 
-Add the tap:
-
-```bash
-brew tap fraluc06/ffmpeg-svt-av1-essential
-````
-
 Install SVT-AV1-Essential:
 
 ```bash
-brew install svt-av1-essential
+brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential
 ```
 
 Install custom FFmpeg with SVT-AV1-Essential included:
 
 ```bash
-brew install ffmpeg-custom
+brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg-custom
 ```
 
 ---
@@ -45,7 +39,8 @@ Verify that FFmpeg is using SVT-AV1-Essential:
 ```bash
 ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=10 \
   -c:v libsvtav1 -preset 8 -crf 40 -y out.mkv -v verbose 2>&1 | grep SVT && rm -rf out.mkv
-  ```
+```
+
 Expected output:
 ```
 Svt[info]: SVT [version]: SVT-AV1-Essential Encoder Lib v3.1.2
