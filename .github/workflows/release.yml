@@ -19,9 +19,6 @@ jobs:
   update-formula:
     name: Update formula version
     runs-on: ubuntu-latest
-    outputs:
-      pr_created: ${{ steps.bump.outputs.pull_request }}
-      branch_name: ${{ steps.bump.outputs.branch_name }}
     permissions:
       contents: write
       pull-requests: write
@@ -248,7 +245,7 @@ jobs:
 
   update-formula-with-bottles:
     name: Update formula with bottle blocks
-    needs: [update-formula, publish-bottles]
+    needs: publish-bottles
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -396,25 +393,6 @@ jobs:
           🤖 Generated with GitHub Actions"
 
           git push origin main
-
-      - name: Delete bump branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH_NAME="${{ needs.update-formula.outputs.branch_name }}"
-          
-          if [ -z "$BRANCH_NAME" ]; then
-            echo "No branch name provided, skipping deletion"
-            exit 0
-          fi
-          
-          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
-            echo "Deleting branch $BRANCH_NAME..."
-            git push origin --delete "$BRANCH_NAME"
-            echo "Branch deleted successfully"
-          else
-            echo "Branch $BRANCH_NAME not found, skipping deletion"
-          fi
 
   test-formula:
     name: Test and audit formula
