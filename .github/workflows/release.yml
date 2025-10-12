@@ -19,6 +19,8 @@ jobs:
   update-formula:
     name: Update formula version
     runs-on: ubuntu-latest
+    outputs:
+      pr_created: ${{ steps.bump.outputs.pull_request }}
     permissions:
       contents: write
       pull-requests: write
@@ -374,7 +376,13 @@ jobs:
       - name: Commit and push formula with bottles
         run: |
           git pull --rebase origin main
-          git add Formula/${{ inputs.formula }}.rb
+          git add -f Formula/${{ inputs.formula }}.rb
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
           git commit -m "Add bottles for ${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}
 
           Bottles built for:
@@ -387,6 +395,20 @@ jobs:
           🤖 Generated with GitHub Actions"
 
           git push origin main
+
+      - name: Delete bump branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="bump-${{ inputs.formula }}-${{ steps.version.outputs.tag-name }}"
+          
+          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+            echo "Deleting branch $BRANCH_NAME..."
+            git push origin --delete "$BRANCH_NAME"
+            echo "Branch deleted successfully"
+          else
+            echo "Branch $BRANCH_NAME not found, skipping deletion"
+          fi
 
   test-formula:
     name: Test and audit formula
