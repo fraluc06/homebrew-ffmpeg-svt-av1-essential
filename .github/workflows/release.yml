@@ -38,9 +38,11 @@ jobs:
             DOWNLOAD_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/$VERSION.tar.gz"
           fi
           
-          echo "tag-name=$TAG_NAME" >> "$GITHUB_OUTPUT"
-          echo "download-url=$DOWNLOAD_URL" >> "$GITHUB_OUTPUT"
-          echo "version-input=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "tag-name=$TAG_NAME"
+            echo "download-url=$DOWNLOAD_URL"
+            echo "version-input=$VERSION"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Checkout repository
         uses: actions/checkout@v4
