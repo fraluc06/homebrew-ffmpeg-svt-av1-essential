@@ -215,7 +215,7 @@ jobs:
 
             gh release create "$TAG_NAME" \
               --repo ${{ github.repository }} \
-              --title "${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}" \
+              --title "Bottles for ${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}" \
               --notes "Pre-compiled bottles for ${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}
 
           **Supported platforms:**
