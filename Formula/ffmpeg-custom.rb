@@ -13,12 +13,12 @@ class FfmpegCustom < Formula
   end
 
   bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-v8.0-bottles"
-    sha256 arm64_tahoe:   "789f830e2a0efbc670544c3bf85ad0ca3d84c4982833663f7a0dd0836e07e536"
-    sha256 arm64_sequoia: "6d5cbec20230ea48b51eae70757b182e349add54a00d4cee74c2cc241a634e99"
-    sha256 arm64_sonoma:  "be3bc9c293da8fdc9b531c7e154d52bb6f2e14e289742e8cf37c54a502ac2032"
-    sha256 ventura:       "6a87b358b7cef0129fe77813bd674a0464c8fa231be8b787fd4a4e01d24cacae"
-    sha256 x86_64_linux:  "8c498f91ceecbb1dd4cb97dc1e68b66d9dd30007381043de125234d1627b0944"
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-v8.0"
+    sha256 arm64_tahoe:   "fc8e13b9bcbddfcede6fd237652a3f9e88faa7c1a2567123001ff82935ff77a4"
+    sha256 arm64_sequoia: "a7146f62a74eec801e09b143462dab1cf10c6f8d95bd94a80e819a3073510438"
+    sha256 arm64_sonoma:  "992482ce887626931b29f39a03d20413c5556fd55366a49d97d9bbb40a1aa829"
+    sha256 ventura:       "095318be4127d94678e4582d11b3cf5d12605cd0315fc610e5513448612f9571"
+    sha256 x86_64_linux:  "aba6444848d90f4529990306e7b7a5078118557d39ffdfb034ba79292bee3299"
   end
 
   depends_on "pkgconf" => :build
