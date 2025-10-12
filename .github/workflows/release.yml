@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pr_created: ${{ steps.bump.outputs.pull_request }}
+      branch_name: ${{ steps.bump.outputs.branch_name }}
     permissions:
       contents: write
       pull-requests: write
@@ -400,7 +401,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH_NAME="bump-${{ inputs.formula }}-${{ steps.version.outputs.tag-name }}"
+          BRANCH_NAME="${{ needs.update-formula.outputs.branch_name }}"
+          
+          if [ -z "$BRANCH_NAME" ]; then
+            echo "No branch name provided, skipping deletion"
+            exit 0
+          fi
           
           if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
             echo "Deleting branch $BRANCH_NAME..."
