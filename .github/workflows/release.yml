@@ -1,0 +1,423 @@
+name: Release Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      formula:
+        description: 'Formula to release (svt-av1-essential or ffmpeg-custom)'
+        required: true
+        type: choice
+        options:
+          - svt-av1-essential
+          - ffmpeg-custom
+      version:
+        description: 'Version (e.g., v3.1.2-Essential for svt-av1-essential, n8.0 for ffmpeg-custom)'
+        required: true
+        type: string
+
+jobs:
+  update-formula:
+    name: Update formula version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Determine version parameters
+        id: version
+        env:
+          FORMULA: ${{ inputs.formula }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$FORMULA" = "svt-av1-essential" ]; then
+            TAG_NAME="$VERSION"
+            DOWNLOAD_URL="https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/$VERSION.tar.gz"
+          else
+            CLEAN_VERSION="${VERSION#n}"
+            TAG_NAME="$CLEAN_VERSION"
+            DOWNLOAD_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/$VERSION.tar.gz"
+          fi
+          
+          echo "tag-name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "download-url=$DOWNLOAD_URL" >> "$GITHUB_OUTPUT"
+          echo "version-input=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update formula
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: ${{ inputs.formula }}
+          formula-path: Formula/${{ inputs.formula }}.rb
+          homebrew-tap: fraluc06/homebrew-ffmpeg-svt-av1-essential
+          base-branch: main
+          create-branch: true
+          create-pullrequest: true
+          tag-name: ${{ steps.version.outputs.tag-name }}
+          download-url: ${{ steps.version.outputs.download-url }}
+        env:
+          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+
+      - name: Auto-merge PR and wait
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Waiting for PR to be created..."
+          sleep 30
+          
+          PR_NUMBER=$(gh pr list --head "bump-${{ inputs.formula }}-${{ steps.version.outputs.tag-name }}" --json number --jq '.[0].number')
+          
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Found PR #$PR_NUMBER, merging..."
+            gh pr merge "$PR_NUMBER" --squash
+            echo "PR merged successfully"
+          else
+            echo "Error: No PR found"
+            exit 1
+          fi
+
+
+
+  build-bottles:
+    name: Build bottles
+    needs: update-formula
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-13, macos-14, macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - name: Wait for formula update to be merged
+        run: sleep 60
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Homebrew on Linux
+        if: runner.os == 'Linux'
+        run: |
+          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+      - name: Build bottle
+        run: |
+          brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+
+          brew deps --include-build fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }} | xargs -n1 brew install || true
+
+          brew install --build-bottle fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+
+          brew bottle --json --only-json-tab fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+
+      - name: Upload bottles as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bottles_${{ matrix.os }}
+          path: |
+            *.bottle.*
+            *.json
+          retention-days: 1
+
+  publish-bottles:
+    name: Publish bottles to release
+    needs: build-bottles
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine version parameters
+        id: version
+        env:
+          FORMULA: ${{ inputs.formula }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$FORMULA" = "svt-av1-essential" ]; then
+            CLEAN_VERSION="${VERSION#v}"
+            CLEAN_VERSION="${CLEAN_VERSION%-Essential}"
+          else
+            CLEAN_VERSION="${VERSION#n}"
+          fi
+          
+          echo "clean-version=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Download all bottle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bottles_*
+          merge-multiple: true
+          path: bottles
+
+      - name: Validate and prepare bottles for release
+        run: |
+          echo "Validating bottles for release..."
+
+          rm -f bottles/*.json
+
+          echo "Renaming bottles to fix double-dash issue..."
+          cd bottles
+          for file in *--*.bottle.*.tar.gz; do
+            if [ -f "$file" ]; then
+              newname="${file/--/-}"
+              echo "Renaming: $file -> $newname"
+              mv "$file" "$newname"
+            fi
+          done
+
+          echo "Removing rebuild numbers from bottle filenames..."
+          for file in *.bottle.[0-9]*.tar.gz; do
+            if [ -f "$file" ]; then
+              newname=$(echo "$file" | sed -E 's/\.bottle\.[0-9]+/.bottle/')
+              echo "Renaming: $file -> $newname"
+              mv "$file" "$newname"
+            fi
+          done
+          cd ..
+
+          bottle_count=$(find bottles -name "*.bottle.*" -type f | wc -l)
+
+          if [ "$bottle_count" -eq 0 ]; then
+            echo "Error: No bottle files to publish!"
+            exit 1
+          fi
+
+          echo "Found $bottle_count bottle files to publish:"
+          ls -lah bottles/
+
+      - name: Create or update Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ inputs.formula }}-v${{ steps.version.outputs.clean-version }}
+        run: |
+          if gh release view "$TAG_NAME" --repo ${{ github.repository }} >/dev/null 2>&1; then
+            echo "Release $TAG_NAME already exists, uploading bottles to existing release..."
+
+            for bottle in bottles/*; do
+              echo "Uploading $(basename "$bottle")..."
+              gh release upload "$TAG_NAME" "$bottle" \
+                --repo ${{ github.repository }} \
+                --clobber
+            done
+          else
+            echo "Creating new release $TAG_NAME..."
+
+            gh release create "$TAG_NAME" \
+              --repo ${{ github.repository }} \
+              --title "${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}" \
+              --notes "Pre-compiled bottles for ${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}
+
+          **Supported platforms:**
+          - macOS 13 (Ventura)
+          - macOS 14 (Sonoma)
+          - macOS 15 (Sequoia)
+          - macOS 26 (Tahoe)
+          - Ubuntu 24.04
+
+          **Installation:**
+          \`\`\`bash
+          brew install fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+          \`\`\`
+
+          🤖 Built with GitHub Actions" \
+              bottles/*
+          fi
+
+      - name: Verify release and list assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ inputs.formula }}-v${{ steps.version.outputs.clean-version }}
+        run: |
+          echo "Release $TAG_NAME created/updated successfully!"
+          echo "Assets in release:"
+          gh release view "$TAG_NAME" --repo ${{ github.repository }} --json assets --jq '.assets[].name'
+
+  update-formula-with-bottles:
+    name: Update formula with bottle blocks
+    needs: publish-bottles
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Wait for bottles to be published
+        run: sleep 45
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Homebrew on Linux
+        run: |
+          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+      - name: Determine version parameters
+        id: version
+        env:
+          FORMULA: ${{ inputs.formula }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$FORMULA" = "svt-av1-essential" ]; then
+            CLEAN_VERSION="${VERSION#v}"
+            CLEAN_VERSION="${CLEAN_VERSION%-Essential}"
+          else
+            CLEAN_VERSION="${VERSION#n}"
+          fi
+          
+          echo "clean-version=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Download all bottle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bottles_*
+          merge-multiple: true
+          path: bottles
+
+      - name: Validate downloaded bottles
+        run: |
+          echo "Validating downloaded bottles..."
+          json_count=$(find bottles -name "*.json" -type f | wc -l)
+          bottle_count=$(find bottles -name "*.bottle.*" ! -name "*.json" -type f | wc -l)
+
+          echo "Found $json_count JSON files and $bottle_count bottle files"
+
+          if [ "$json_count" -eq 0 ]; then
+            echo "Error: No JSON files found!"
+            exit 1
+          fi
+
+          if [ "$bottle_count" -eq 0 ]; then
+            echo "Error: No bottle files found!"
+            exit 1
+          fi
+
+          echo "Contents:"
+          ls -lah bottles/
+
+      - name: Tap repository locally
+        run: |
+          brew untap fraluc06/ffmpeg-svt-av1-essential 2>/dev/null || true
+
+          brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge bottle JSON into formula
+        env:
+          ROOT_URL: https://github.com/${{ github.repository }}/releases/download/${{ inputs.formula }}-v${{ steps.version.outputs.clean-version }}
+        run: |
+          cd bottles
+
+          if ! compgen -G "*.json" > /dev/null; then
+            echo "Error: No JSON files to merge"
+            exit 1
+          fi
+
+          echo "Merging bottle JSONs into formula with root_url: $ROOT_URL"
+          ls -1 ./*.json
+
+          if ! brew bottle --merge --write --root-url="$ROOT_URL" ./*.json; then
+            echo "Error: Failed to merge bottle JSONs"
+            exit 1
+          fi
+
+          cd ..
+
+      - name: Copy formula from tap and verify
+        env:
+          ROOT_URL: https://github.com/${{ github.repository }}/releases/download/${{ inputs.formula }}-v${{ steps.version.outputs.clean-version }}
+        run: |
+          TAP_PATH=$(brew --repository fraluc06/ffmpeg-svt-av1-essential)
+          echo "Tap path: $TAP_PATH"
+          echo "Workspace: $GITHUB_WORKSPACE"
+
+          cp "$TAP_PATH/Formula/${{ inputs.formula }}.rb" Formula/${{ inputs.formula }}.rb
+
+          echo "Verifying formula was updated..."
+          if grep -q "bottle do" Formula/${{ inputs.formula }}.rb; then
+            echo "✓ Bottle block found in formula"
+
+            if ! grep -q "root_url" Formula/${{ inputs.formula }}.rb; then
+              echo "⚠️  root_url missing, adding it..."
+              sed -i.bak "/bottle do/a\\    root_url \"$ROOT_URL\"" Formula/${{ inputs.formula }}.rb
+              rm -f Formula/${{ inputs.formula }}.rb.bak
+            fi
+
+            if grep -q "rebuild" Formula/${{ inputs.formula }}.rb; then
+              echo "⚠️  Removing rebuild number..."
+              sed -i.bak '/^[[:space:]]*rebuild /d' Formula/${{ inputs.formula }}.rb
+              rm -f Formula/${{ inputs.formula }}.rb.bak
+            fi
+
+            echo "Bottle block content:"
+            sed -n '/bottle do/,/^  end$/p' Formula/${{ inputs.formula }}.rb
+          else
+            echo "Error: No bottle block found in formula after merge"
+            exit 1
+          fi
+
+      - name: Commit and push formula with bottles
+        run: |
+          git pull --rebase origin main
+          git add Formula/${{ inputs.formula }}.rb
+          git commit -m "Add bottles for ${{ inputs.formula }} v${{ steps.version.outputs.clean-version }}
+
+          Bottles built for:
+          - macOS 13 (Ventura)
+          - macOS 14 (Sonoma)
+          - macOS 15 (Sequoia)
+          - macOS 26 (Tahoe)
+          - Ubuntu 24.04
+
+          🤖 Generated with GitHub Actions"
+
+          git push origin main
+
+  test-formula:
+    name: Test and audit formula
+    needs: update-formula-with-bottles
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-13, macos-14, macos-15]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Homebrew on Linux
+        if: runner.os == 'Linux'
+        run: |
+          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+      - name: Tap repository
+        run: |
+          brew tap fraluc06/ffmpeg-svt-av1-essential "$GITHUB_WORKSPACE"
+
+      - name: Audit formula
+        run: |
+          brew audit --strict --online fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+
+      - name: Install formula
+        run: |
+          brew install fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
+
+      - name: Test formula
+        run: |
+          brew test fraluc06/ffmpeg-svt-av1-essential/${{ inputs.formula }}
