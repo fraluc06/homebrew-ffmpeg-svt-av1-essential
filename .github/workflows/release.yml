@@ -248,7 +248,7 @@ jobs:
 
   update-formula-with-bottles:
     name: Update formula with bottle blocks
-    needs: publish-bottles
+    needs: [update-formula, publish-bottles]
     runs-on: ubuntu-latest
     permissions:
       contents: write
