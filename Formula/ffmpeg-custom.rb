@@ -1,8 +1,8 @@
 class FfmpegCustom < Formula
   desc "Play, record, convert, and stream audio and video (with SVT-AV1-Essential)"
   homepage "https://ffmpeg.org/"
-  url "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n8.0.tar.gz"
-  sha256 "dd4030dbfdc34d9ff255a116bdd1caade42500ac2981efa27f8b151cc54c7b9e"
+  url "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n8.0.1.tar.gz"
+  sha256 "679aa13a19415d5ddab91e580084e3ab20c963c8240001e5cbb955a97bdd81b1"
   license "GPL-2.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
