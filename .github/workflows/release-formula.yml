@@ -1,0 +1,83 @@
+name: Release Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      formula:
+        description: 'Formula to release (svt-av1-essential or ffmpeg-custom)'
+        required: true
+        type: choice
+        options:
+          - svt-av1-essential
+          - ffmpeg-custom
+      version:
+        description: 'Version (e.g., v3.1.2-Essential for svt-av1-essential, n8.0 for ffmpeg-custom)'
+        required: true
+        type: string
+
+env:
+  FORMULA_TAP: fraluc06/homebrew-ffmpeg-svt-av1-essential
+
+jobs:
+  determine-config:
+    name: Determine project configuration
+    runs-on: ubuntu-latest
+    outputs:
+      formula-name: ${{ steps.config.outputs.formula-name }}
+      formula-path: ${{ steps.config.outputs.formula-path }}
+      clean-version: ${{ steps.config.outputs.clean-version }}
+      tag-name: ${{ steps.config.outputs.tag-name }}
+      download-url: ${{ steps.config.outputs.download-url }}
+      version-input: ${{ steps.config.outputs.version-input }}
+    steps:
+      - name: Determine configuration
+        id: config
+        env:
+          FORMULA: ${{ inputs.formula }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$FORMULA" = "svt-av1-essential" ]; then
+            TAG_NAME="$VERSION"
+            CLEAN_VERSION="${VERSION#v}"
+            CLEAN_VERSION="${CLEAN_VERSION%-Essential}"
+            DOWNLOAD_URL="https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/$VERSION.tar.gz"
+          else
+            CLEAN_VERSION="${VERSION#n}"
+            TAG_NAME="$CLEAN_VERSION"
+            DOWNLOAD_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/$VERSION.tar.gz"
+          fi
+          
+          {
+            echo "formula-name=$FORMULA"
+            echo "formula-path=Formula/$FORMULA.rb"
+            echo "clean-version=$CLEAN_VERSION"
+            echo "tag-name=$TAG_NAME"
+            echo "download-url=$DOWNLOAD_URL"
+            echo "version-input=$VERSION"
+          } >> "$GITHUB_OUTPUT"
+
+  update-formula:
+    name: Update formula version
+    runs-on: ubuntu-latest
+    needs: determine-config
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update formula
+        id: bump
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: ${{ needs.determine-config.outputs.formula-name }}
+          formula-path: ${{ needs.determine-config.outputs.formula-path }}
+          homebrew-tap: ${{ env.FORMULA_TAP }}
+          base-branch: main
+          create-branch: true
+          create-pullrequest: true
+          tag-name: ${{ needs.determine-config.outputs.tag-name }}
+          download-url: ${{ needs.determine-config.outputs.download-url }}
+        env:
+          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
