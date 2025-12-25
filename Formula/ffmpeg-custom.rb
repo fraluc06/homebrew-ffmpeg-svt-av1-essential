@@ -11,6 +11,14 @@ class FfmpegCustom < Formula
     regex(/^n?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.0.1"
+    sha256 arm64_tahoe:   "8bf48809fed5dec0496b4c870cea19b47b86434c7d6c8b83081c5d3beaa7dc1c"
+    sha256 arm64_sequoia: "d697dd4153bb6ec630f1a4c5c69b29be9b1fc400fa6b5af2ea305c497b239965"
+    sha256 arm64_sonoma:  "acc44bd17aa7ccf06212b8f19d65a86282944f8e77ac568b84d9ad60a73bc11c"
+    sha256 x86_64_linux:  "f5672d6641cdad9c466f05550011c346682299f9d6699ec52c32f738a5f25a6c"
+  end
+
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
