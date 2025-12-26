@@ -14,27 +14,109 @@ on:
         description: 'Version (e.g., v3.1.2-Essential for svt-av1-essential, n8.0 for ffmpeg-custom)'
         required: true
         type: string
+  schedule:
+    - cron: '0 0 1 * *'
 
 env:
   FORMULA_TAP: fraluc06/homebrew-ffmpeg-svt-av1-essential
 
 jobs:
+  check-new-tags:
+    name: Check for new tags
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    outputs:
+      svt-new-tag: ${{ steps.check-svt.outputs.new-tag }}
+      ffmpeg-new-tag: ${{ steps.check-ffmpeg.outputs.new-tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check svt-av1-essential tags
+        id: check-svt
+        run: |
+          echo "Checking for new svt-av1-essential tags..."
+          
+          CURRENT_VERSION=$(grep "version " Formula/svt-av1-essential.rb | head -1 | sed 's/.*"\([^"]*\)".*/\1/')
+          
+          LATEST_TAG=$(gh api repos/nekotrix/SVT-AV1-Essential/tags --jq '.[0].name')
+          
+          if [ "$LATEST_TAG" != "v${CURRENT_VERSION}-Essential" ]; then
+            echo "new-tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+            echo "New tag found: $LATEST_TAG"
+          else
+            echo "No new tag for svt-av1-essential"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check ffmpeg tags
+        id: check-ffmpeg
+        run: |
+          echo "Checking for new ffmpeg tags..."
+          
+          CURRENT_VERSION=$(grep "version " Formula/ffmpeg-custom.rb | head -1 | sed 's/.*"\([^"]*\)".*/\1/')
+          
+          TAGS=$(gh api repos/FFmpeg/FFmpeg/tags --jq '.[].name')
+          NEWEST_N8_TAG=$(echo "$TAGS" | grep '^n8\.[0-9]\+$' | sort -V | tail -1)
+          
+          if [ -n "$NEWEST_N8_TAG" ] && [ "$NEWEST_N8_TAG" != "n${CURRENT_VERSION}" ]; then
+            echo "new-tag=$NEWEST_N8_TAG" >> "$GITHUB_OUTPUT"
+            echo "New tag found: $NEWEST_N8_TAG"
+          else
+            echo "No new tag for ffmpeg"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   determine-config:
     name: Determine project configuration
     runs-on: ubuntu-latest
+    needs: check-new-tags
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      needs.check-new-tags.outputs.svt-new-tag != '' ||
+      needs.check-new-tags.outputs.ffmpeg-new-tag != ''
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Build matrix
+        id: matrix
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            ITEMS=()
+            if [ -n "${{ needs.check-new-tags.outputs.svt-new-tag }}" ]; then
+              ITEMS+=('{"formula":"svt-av1-essential","version":"${{ needs.check-new-tags.outputs.svt-new-tag }}"}')
+            fi
+            if [ -n "${{ needs.check-new-tags.outputs.ffmpeg-new-tag }}" ]; then
+              ITEMS+=('{"formula":"ffmpeg-custom","version":"${{ needs.check-new-tags.outputs.ffmpeg-new-tag }}"}')
+            fi
+            if [ ${#ITEMS[@]} -gt 0 ]; then
+              IFS=','; echo "matrix=[${ITEMS[*]}]" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "matrix=[{\"formula\":\"${{ inputs.formula }}\",\"version\":\"${{ inputs.version }}\"}]" >> "$GITHUB_OUTPUT"
+          fi
+
+  determine-config-single:
+    name: Determine config for ${{ matrix.item.formula }}
+    runs-on: ubuntu-latest
+    needs: determine-config
+    strategy:
+      matrix:
+        item: ${{ fromJson(needs.determine-config.outputs.matrix) }}
     outputs:
       formula-name: ${{ steps.config.outputs.formula-name }}
       formula-path: ${{ steps.config.outputs.formula-path }}
       clean-version: ${{ steps.config.outputs.clean-version }}
       tag-name: ${{ steps.config.outputs.tag-name }}
       download-url: ${{ steps.config.outputs.download-url }}
-      version-input: ${{ steps.config.outputs.version-input }}
     steps:
       - name: Determine configuration
         id: config
         env:
-          FORMULA: ${{ inputs.formula }}
-          VERSION: ${{ inputs.version }}
+          FORMULA: ${{ matrix.item.formula }}
+          VERSION: ${{ matrix.item.version }}
         run: |
           if [ "$FORMULA" = "svt-av1-essential" ]; then
             TAG_NAME="$VERSION"
@@ -53,13 +135,15 @@ jobs:
             echo "clean-version=$CLEAN_VERSION"
             echo "tag-name=$TAG_NAME"
             echo "download-url=$DOWNLOAD_URL"
-            echo "version-input=$VERSION"
           } >> "$GITHUB_OUTPUT"
 
   update-formula:
-    name: Update formula version
+    name: Update ${{ matrix.item.formula }}
     runs-on: ubuntu-latest
-    needs: determine-config
+    needs: determine-config-single
+    strategy:
+      matrix:
+        item: ${{ fromJson(needs.determine-config.outputs.matrix) }}
     permissions:
       contents: write
       pull-requests: write
@@ -71,13 +155,13 @@ jobs:
         id: bump
         uses: mislav/bump-homebrew-formula-action@v3
         with:
-          formula-name: ${{ needs.determine-config.outputs.formula-name }}
-          formula-path: ${{ needs.determine-config.outputs.formula-path }}
+          formula-name: ${{ needs.determine-config-single.outputs.formula-name }}
+          formula-path: ${{ needs.determine-config-single.outputs.formula-path }}
           homebrew-tap: ${{ env.FORMULA_TAP }}
           base-branch: main
           create-branch: true
           create-pullrequest: true
-          tag-name: ${{ needs.determine-config.outputs.tag-name }}
-          download-url: ${{ needs.determine-config.outputs.download-url }}
+          tag-name: ${{ needs.determine-config-single.outputs.tag-name }}
+          download-url: ${{ needs.determine-config-single.outputs.download-url }}
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
