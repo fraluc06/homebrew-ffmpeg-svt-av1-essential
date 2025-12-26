@@ -50,7 +50,7 @@ jobs:
     name: Add pr-pull label
     runs-on: ubuntu-latest
     needs: test-bot
-    if: github.event_name == 'pull_request' && success()
+    if: github.event_name == 'pull_request' && needs.test-bot.result == 'success'
     permissions:
       pull-requests: write
     steps:

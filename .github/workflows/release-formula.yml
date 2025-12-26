@@ -140,7 +140,7 @@ jobs:
   update-formula:
     name: Update ${{ matrix.item.formula }}
     runs-on: ubuntu-latest
-    needs: determine-config-single
+    needs: [determine-config, determine-config-single]
     strategy:
       matrix:
         item: ${{ fromJson(needs.determine-config.outputs.matrix) }}
