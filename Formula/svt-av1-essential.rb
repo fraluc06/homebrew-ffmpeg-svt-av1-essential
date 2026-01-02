@@ -1,8 +1,9 @@
 class SvtAv1Essential < Formula
   desc "SVT-AV1 encoder fork with sensible defaults"
   homepage "https://github.com/nekotrix/SVT-AV1-Essential"
-  url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v3.1.0.tar.gz"
-  sha256 "28ebbfbe6dcff4bbc73aa0b56a883f9490e9c2ac23d3896ddf7237ee07615782"
+  url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v3.1.2-Essential.tar.gz"
+  version "3.1.2-Essential"
+  sha256 "34f081b6a9789ae823fa495cbcf55a12484c438eac43de22f4b55378d0bfee39"
   license "BSD-2-Clause"
 
   livecheck do
