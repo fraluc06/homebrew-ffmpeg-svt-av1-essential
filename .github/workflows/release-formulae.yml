@@ -1,0 +1,49 @@
+name: Release Formulae (Livecheck)
+
+on:
+  workflow_dispatch:
+    inputs:
+      formula:
+        description: 'Formula to release (select "all" to check all formulas)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - svt-av1-essential
+          - ffmpeg-custom
+  schedule:
+    - cron: '35 18 * 1 *'
+
+jobs:
+  matrix-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      formulas: ${{ steps.set-matrix.outputs.formulas }}
+    steps:
+      - id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ] || [ "${{ inputs.formula }}" == "all" ]; then
+            echo 'formulas=["svt-av1-essential", "ffmpeg-custom"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'formulas=["${{ inputs.formula }}"]' >> "$GITHUB_OUTPUT"
+          fi
+
+  bump:
+    needs: matrix-setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        formula: ${{ fromJson(needs.matrix-setup.outputs.formulas) }}
+
+    steps:
+      - name: Update ${{ matrix.formula }} using Livecheck
+        uses: dawidd6/action-homebrew-bump-formula@v7
+        with:
+          token: ${{ secrets.COMMITTER_TOKEN }}
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+          tap: fraluc06/homebrew-ffmpeg-svt-av1-essential
+          formula: ${{ matrix.formula }}
+          livecheck: true
