@@ -13,8 +13,7 @@ on:
           - svt-av1-essential
           - ffmpeg-custom
   schedule:
-    - cron: '35 18 * 1 *'
-
+    - cron: '0 5 * * 1'
 jobs:
   matrix-setup:
     runs-on: ubuntu-latest
