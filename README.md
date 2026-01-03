@@ -34,7 +34,7 @@ Expected output:
 SVT-AV1 v3.1.2 (release)
 ```
 
-Verify that FFmpeg is using SVT-AV1-Essential:
+Verify that FFmpeg is using SVT-AV1-Essential (for Bash and Zsh users):
 
 ```bash
 ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=10 \
