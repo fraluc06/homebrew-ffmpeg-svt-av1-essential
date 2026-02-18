@@ -1,22 +1,16 @@
 class FfmpegCustom < Formula
   desc "Play, record, convert, and stream audio and video (with SVT-AV1-Essential)"
   homepage "https://ffmpeg.org/"
-  url "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n8.0.1.tar.gz"
-  sha256 "679aa13a19415d5ddab91e580084e3ab20c963c8240001e5cbb955a97bdd81b1"
+  url "https://ffmpeg.org/releases/ffmpeg-8.0.1.tar.xz"
+  sha256 "05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41"
+  # This formula is based on the official ffmpeg-full one.
+  # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
+  # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
-    url :stable
-    regex(/^n?(8(?:\.\d+)+)$/i)
-  end
-
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.0.1"
-    sha256 arm64_tahoe:   "30d30782e94d0d7f7436e33d54e332244531632dd7d0b782ab7dbb4c80fddbc8"
-    sha256 arm64_sequoia: "9171bc57bdf70f4ba23e578dbf1538ef0411318b8c6b83c09070aae4595ecca6"
-    sha256 arm64_sonoma:  "4d9196d653b5572faaf1b5507d91dfd53584a585d9ff642717a691c9c6ecdbdb"
-    sha256 x86_64_linux:  "d28eb3958130890d46aa51b924b3cda748cf801abc9de360015cf7ef2e12b8d0"
+    formula "ffmpeg"
   end
 
   depends_on "pkgconf" => :build
@@ -32,6 +26,7 @@ class FfmpegCustom < Formula
   depends_on "lame"
   depends_on "libass"
   depends_on "libbluray"
+  depends_on "libplacebo"
   depends_on "librist"
   depends_on "libsoxr"
   depends_on "libssh"
@@ -41,6 +36,7 @@ class FfmpegCustom < Formula
   depends_on "libvpx"
   depends_on "libx11"
   depends_on "libxcb"
+  depends_on "llama.cpp"
   depends_on "opencore-amr"
   depends_on "openjpeg"
   depends_on "opus"
@@ -54,6 +50,7 @@ class FfmpegCustom < Formula
   depends_on "tesseract"
   depends_on "theora"
   depends_on "webp"
+  depends_on "whisper-cpp"
   depends_on "x264"
   depends_on "x265"
   depends_on "xvid"
@@ -63,7 +60,6 @@ class FfmpegCustom < Formula
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
-  uses_from_macos "zlib"
 
   on_macos do
     depends_on "libarchive"
@@ -75,6 +71,7 @@ class FfmpegCustom < Formula
     depends_on "alsa-lib"
     depends_on "libxext"
     depends_on "libxv"
+    depends_on "zlib-ng-compat"
   end
 
   on_intel do
@@ -88,9 +85,15 @@ class FfmpegCustom < Formula
     sha256 "57e26caced5a1382cb639235f9555fc50e45e7bf8333f7c9ae3d49b3241d3f77"
   end
 
+  # Add svt-av1 4.x support
+  patch do
+    url "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/a5d4c398b411a00ac09d8fe3b66117222323844c"
+    sha256 "1dbbc1a4cf9834b3902236abc27fefe982da03a14bcaa89fb90c7c8bd10a1664"
+  end
+
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
-    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
+    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
 
     args = %W[
       --prefix=#{prefix}
@@ -111,6 +114,7 @@ class FfmpegCustom < Formula
       --enable-libjxl
       --enable-libmp3lame
       --enable-libopus
+      --enable-libplacebo
       --enable-librav1e
       --enable-librist
       --enable-librubberband
@@ -118,7 +122,6 @@ class FfmpegCustom < Formula
       --enable-libsrt
       --enable-libssh
       --enable-libsvtav1
-      --enable-lto
       --enable-libtesseract
       --enable-libtheora
       --enable-libvidstab
@@ -142,6 +145,7 @@ class FfmpegCustom < Formula
       --enable-libsoxr
       --enable-libzmq
       --enable-libzimg
+      --enable-whisper
       --disable-libjack
       --disable-indev=jack
     ]
@@ -159,10 +163,21 @@ class FfmpegCustom < Formula
     pkgshare.install buildpath/"tools/python"
   end
 
+  def caveats
+    <<~EOS
+      ffmpeg-full includes additional tools and libraries that are not included in the regular ffmpeg formula.
+    EOS
+  end
+
   test do
-    # Create an example mp4 file
+    # Create a 5 second test MP4
     mp4out = testpath/"video.mp4"
-    system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_path_exists mp4out
+    system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=5", mp4out
+    assert_match(/Duration: 00:00:05\.00,.*Video: h264/m, shell_output("#{bin}/ffprobe -hide_banner #{mp4out} 2>&1"))
+
+    # Re-encode it in HEVC/Matroska
+    mkvout = testpath/"video.mkv"
+    system bin/"ffmpeg", "-i", mp4out, "-c:v", "hevc", mkvout
+    assert_match(/Duration: 00:00:05\.00,.*Video: hevc/m, shell_output("#{bin}/ffprobe -hide_banner #{mkvout} 2>&1"))
   end
 end
