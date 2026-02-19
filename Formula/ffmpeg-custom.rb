@@ -1,8 +1,8 @@
 class FfmpegCustom < Formula
   desc "Play, record, convert, and stream audio and video (with SVT-AV1-Essential)"
   homepage "https://ffmpeg.org/"
-  url "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n8.0.tar.gz"
-  sha256 "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
+  url "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n8.0.1.tar.gz"
+  sha256 "679aa13a19415d5ddab91e580084e3ab20c963c8240001e5cbb955a97bdd81b1"
   # This formula is based on the official ffmpeg-full one.
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
