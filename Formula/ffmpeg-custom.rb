@@ -24,6 +24,7 @@ class FfmpegCustom < Formula
   depends_on "jpeg-xl"
   depends_on "lame"
   depends_on "libass"
+  depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "libx11"
@@ -96,6 +97,7 @@ class FfmpegCustom < Formula
       --enable-libsnappy
       --enable-libsrt
       --enable-libsvtav1
+      --enable-libvmaf
       --enable-libvorbis
       --enable-libvpx
       --enable-libwebp
