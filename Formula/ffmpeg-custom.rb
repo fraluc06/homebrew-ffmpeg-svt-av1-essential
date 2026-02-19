@@ -1,52 +1,58 @@
 class FfmpegCustom < Formula
   desc "Play, record, convert, and stream audio and video (with SVT-AV1-Essential)"
   homepage "https://ffmpeg.org/"
-  url "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n8.0.1.tar.gz"
-  sha256 "679aa13a19415d5ddab91e580084e3ab20c963c8240001e5cbb955a97bdd81b1"
-  # This formula is based on the official ffmpeg-full one.
-  # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
-  # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
+  url "https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz"
+  sha256 "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
   license "GPL-2.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
-    url :stable
-    regex(/^n?(8(?:\.\d+)+)$/i)
-  end
-
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.0.1"
-    sha256 arm64_tahoe:   "e5f6402ce26b443e8f8281853e4b80fe7484b1bf0ffbab08e295b93d678ba1aa"
-    sha256 arm64_sequoia: "c76468e5861c49f78c913b48ff0517c74f1f0b14f92fe405aa19dffde5b3eb48"
-    sha256 arm64_sonoma:  "b2f314ecf4fb5f63d6ea59ee57c1cd17e56874c29e6bd421077ce73e8ef38afc"
-    sha256 x86_64_linux:  "457bfa0a8b4df9efd1da45852e01df787b848e748caa28c6a96f080a726749f0"
+    formula "ffmpeg"
   end
 
   depends_on "pkgconf" => :build
   depends_on "aom"
+  depends_on "aribb24"
   depends_on "dav1d"
   depends_on "fontconfig"
   depends_on "freetype"
+  depends_on "frei0r"
   depends_on "gnutls"
   depends_on "harfbuzz"
   depends_on "jpeg-xl"
   depends_on "lame"
   depends_on "libass"
+  depends_on "libbluray"
+  depends_on "libplacebo"
+  depends_on "librist"
+  depends_on "libsoxr"
+  depends_on "libssh"
+  depends_on "libvidstab"
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "libx11"
   depends_on "libxcb"
+  depends_on "llama.cpp"
+  depends_on "opencore-amr"
+  depends_on "openjpeg"
   depends_on "opus"
   depends_on "rav1e"
+  depends_on "rubberband"
   depends_on "sdl2"
   depends_on "snappy"
+  depends_on "speex"
   depends_on "srt"
   depends_on "svt-av1-essential"
+  depends_on "tesseract"
+  depends_on "theora"
   depends_on "webp"
+  depends_on "whisper-cpp"
   depends_on "x264"
   depends_on "x265"
+  depends_on "xvid"
   depends_on "xz"
+  depends_on "zeromq"
   depends_on "zimg"
 
   uses_from_macos "bzip2"
@@ -55,6 +61,7 @@ class FfmpegCustom < Formula
   on_macos do
     depends_on "libarchive"
     depends_on "libogg"
+    depends_on "libsamplerate"
   end
 
   on_linux do
@@ -86,25 +93,35 @@ class FfmpegCustom < Formula
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
 
     args = %W[
+      --prefix=#{prefix}
+      --enable-shared
+      --enable-pthreads
+      --enable-version3
       --cc=#{ENV.cc}
-      --disable-indev=jack
-      --disable-libjack
+      --host-cflags=#{ENV.cflags}
+      --host-ldflags=#{ENV.ldflags}
       --enable-ffplay
       --enable-gnutls
       --enable-gpl
       --enable-libaom
-      --enable-libass
+      --enable-libaribb24
+      --enable-libbluray
       --enable-libdav1d
-      --enable-libfontconfig
-      --enable-libfreetype
       --enable-libharfbuzz
       --enable-libjxl
       --enable-libmp3lame
       --enable-libopus
+      --enable-libplacebo
       --enable-librav1e
+      --enable-librist
+      --enable-librubberband
       --enable-libsnappy
       --enable-libsrt
+      --enable-libssh
       --enable-libsvtav1
+      --enable-libtesseract
+      --enable-libtheora
+      --enable-libvidstab
       --enable-libvmaf
       --enable-libvorbis
       --enable-libvpx
@@ -112,14 +129,22 @@ class FfmpegCustom < Formula
       --enable-libx264
       --enable-libx265
       --enable-libxml2
-      --enable-libzimg
+      --enable-libxvid
       --enable-lzma
-      --enable-pthreads
-      --enable-shared
-      --enable-version3
-      --host-cflags=#{ENV.cflags}
-      --host-ldflags=#{ENV.ldflags}
-      --prefix=#{prefix}
+      --enable-libfontconfig
+      --enable-libfreetype
+      --enable-frei0r
+      --enable-libass
+      --enable-libopencore-amrnb
+      --enable-libopencore-amrwb
+      --enable-libopenjpeg
+      --enable-libspeex
+      --enable-libsoxr
+      --enable-libzmq
+      --enable-libzimg
+      --enable-whisper
+      --disable-libjack
+      --disable-indev=jack
     ]
 
     # Needs corefoundation, coremedia, corevideo
