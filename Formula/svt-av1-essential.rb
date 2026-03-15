@@ -24,6 +24,8 @@ class SvtAv1Essential < Formula
   depends_on "nasm" => :build
   depends_on "ffms2"
 
+  conflicts_with "svt-av1", because: "both install SvtAv1EncApp binary and svt-av1 headers"
+
   def install
     args = [
       "-DCMAKE_BUILD_TYPE=Release",
