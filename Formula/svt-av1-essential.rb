@@ -22,7 +22,6 @@ class SvtAv1Essential < Formula
 
   depends_on "cmake" => :build
   depends_on "nasm" => :build
-  depends_on "ffms2"
 
   conflicts_with "svt-av1", because: "both install SvtAv1EncApp binary and svt-av1 headers"
 
@@ -36,7 +35,6 @@ class SvtAv1Essential < Formula
       "-DENABLE_AVX512=OFF",
       "-DENABLE_NEON_I8MM=OFF",
       "-DBUILD_DEC=OFF",
-      "-DUSE_FFMS2=ON",
       "-DUSE_WEBM_IO=ON",
       "-DREPRODUCIBLE_BUILDS=ON",
       "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
