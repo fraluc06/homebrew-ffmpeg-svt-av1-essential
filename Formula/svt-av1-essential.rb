@@ -22,6 +22,7 @@ class SvtAv1Essential < Formula
 
   depends_on "cmake" => :build
   depends_on "nasm" => :build
+  depends_on "ffms2"
 
   def install
     args = [
