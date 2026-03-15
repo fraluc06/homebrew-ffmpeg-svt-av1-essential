@@ -5,7 +5,6 @@ class FfmpegCustom < Formula
   sha256 "05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41"
   license "GPL-2.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
-  # This formula is based on ffmpeg-full.rb (https://github.com/Homebrew/homebrew-core/blob/753d680fe09665bf42e8f93e1d56d17fcd42e387/Formula/f/ffmpeg-full.rb)
 
   livecheck do
     url "https://ffmpeg.org/download.html"
@@ -84,6 +83,11 @@ class FfmpegCustom < Formula
   on_intel do
     depends_on "nasm" => :build
   end
+
+  conflicts_with "ffmpeg", because: "both install ffmpeg, ffprobe and ffplay binaries"
+  conflicts_with "ffmpeg-full", because: "both install ffmpeg, ffprobe and ffplay binaries"
+
+  # This formula is based on ffmpeg-full.rb (https://github.com/Homebrew/homebrew-core/blob/753d680fe09665bf42e8f93e1d56d17fcd42e387/Formula/f/ffmpeg-full.rb)
 
   # Fix for QtWebEngine, do not remove
   # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=270209

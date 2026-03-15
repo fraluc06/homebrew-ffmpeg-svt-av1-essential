@@ -23,6 +23,8 @@ class SvtAv1Essential < Formula
   depends_on "cmake" => :build
   depends_on "nasm" => :build
 
+  conflicts_with "svt-av1", because: "both install SvtAv1EncApp and SVT-AV1 libraries"
+
   def install
     args = [
       "-DCMAKE_BUILD_TYPE=Release",
