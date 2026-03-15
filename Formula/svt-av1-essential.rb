@@ -34,6 +34,8 @@ class SvtAv1Essential < Formula
       "-DENABLE_AVX512=OFF",
       "-DENABLE_NEON_I8MM=OFF",
       "-DBUILD_DEC=OFF",
+      "-DUSE_FFMS2=ON",
+      "-DUSE_WEBM_IO=ON",
       "-DREPRODUCIBLE_BUILDS=ON",
       "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
       "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG",
