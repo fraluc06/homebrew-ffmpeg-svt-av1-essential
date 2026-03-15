@@ -54,3 +54,44 @@ ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=10 -c:v libsvtav1 -prese
 ```
 
 ---
+
+## ffms2 and SVT-AV1 Compatibility
+
+### Why no ffms2 support in this tap?
+
+[ffms2](https://github.com/FFMS/ffms2) is a video source library that depends on ffmpeg, which in turn depends on svt-av1 (standard). Since svt-av1-essential conflicts with svt-av1, you cannot have both installed simultaneously.
+
+This is a hard dependency conflict:
+
+```
+ffms2→ ffmpeg → svt-av1 (standard) ← conflicts with → svt-av1-essential
+```
+
+Additionally, maintaining a fork of ffms2 that depends on ffmpeg-custom would create a circular dependency and is not sustainable.
+
+### If you need ffms2
+
+Use standard Homebrew ffmpeg with standard svt-av1:
+
+```bash
+brew install ffmpeg ffms2
+```
+
+This gives you ffms2 support with the standard AV1 encoder.
+
+### If you want SVT-AV1-Essential
+
+Use ffmpeg-custom from this tap:
+
+```bash
+brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential
+brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg-custom
+```
+
+This gives you the optimized Essential encoder, but **without ffms2 support**.
+
+### Why not both?
+
+svt-av1-essential and svt-av1 install the same binaries and headers (`SvtAv1EncApp`, `libSvtAv1Enc`, headers). A `conflicts_with` prevents installation of both to avoid undefined behavior and symlink conflicts.
+
+If you attempt to install ffms2 while svt-av1-essential is installed, Homebrew will report a conflict error.

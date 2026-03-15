@@ -24,6 +24,18 @@ class SvtAv1Essential < Formula
   depends_on "nasm" => :build
 
   conflicts_with "svt-av1", because: "both install SvtAv1EncApp and SVT-AV1 libraries"
+  conflicts_with "ffms2",
+    because: "ffms2 depends on ffmpeg, which depends on svt-av1. " \
+              "svt-av1 conflicts with this formula. " \
+              "Use 'brew install ffmpeg ffms2' for standard svt-av1 with ffms2 support."
+
+  def caveats
+    <<~EOS
+      This formula conflicts with svt-av1 and ffms2.
+      - svt-av1-essential is optimized for use with ffmpeg-custom from this tap.
+      - For ffms2 support, use standard svt-av1: 'brew install ffmpeg ffms2'
+    EOS
+  end
 
   def install
     args = [
