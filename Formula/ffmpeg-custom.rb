@@ -11,13 +11,6 @@ class FfmpegCustom < Formula
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.0.1"
-    sha256 arm64_tahoe:   "e324e88c79dde44862b8a5d25cdae29b32babc293b540a621522304c060cc8d2"
-    sha256 arm64_sequoia: "b512a74aba5dc6f6ec5a7460dcff95dde90af9e1dda81f6cd3dfc869523261e9"
-    sha256 arm64_sonoma:  "fb4fffbcedbb5adc64237d76cea020d31448b89a1b3d98a6ed221a44776c4f62"
-  end
-
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
