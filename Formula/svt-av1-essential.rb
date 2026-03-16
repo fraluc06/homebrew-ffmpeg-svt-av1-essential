@@ -7,7 +7,6 @@ class SvtAv1Essential < Formula
 
   livecheck do
     url :stable
-    regex(/^v?(\d+(?:\.\d+)+-Essential)$/i)
     strategy :github_latest
   end
 
