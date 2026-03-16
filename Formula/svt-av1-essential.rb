@@ -22,12 +22,10 @@ class SvtAv1Essential < Formula
 
   depends_on "cmake" => :build
   depends_on "nasm" => :build
+  depends_on "pkgconf" => :build
+  depends_on "ffms2" => :optional
 
   conflicts_with "svt-av1", because: "both install SvtAv1EncApp and SVT-AV1 libraries"
-  conflicts_with "ffms2",
-    because: "ffms2 depends on ffmpeg, which depends on svt-av1; " \
-             "svt-av1 conflicts with this formula; " \
-             "Use 'brew install ffmpeg ffms2' for standard svt-av1 with ffms2 support"
 
   def install
     args = [
@@ -43,7 +41,10 @@ class SvtAv1Essential < Formula
       "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
       "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG",
       "-DCMAKE_INSTALL_PREFIX=#{prefix}",
+      "-DUSE_WEBM_IO=ON",
     ]
+
+    args << "-DUSE_FFMS2=ON" if build.with? "ffms2"
 
     system "cmake", "-S", ".", "-B", "svt_build", *args
     system "cmake", "--build", "svt_build", "--config", "Release", "--parallel"
@@ -51,11 +52,28 @@ class SvtAv1Essential < Formula
   end
 
   def caveats
-    <<~EOS
-      This formula conflicts with svt-av1 and ffms2.
-      - svt-av1-essential is optimized for use with ffmpeg-custom from this tap.
-      - For ffms2 support, use standard svt-av1: 'brew install ffmpeg ffms2'
-    EOS
+    if build.with? "ffms2"
+      <<~EOS
+        Built with FFMS2 support for direct video input (MP4, MKV, etc.).
+
+        WARNING: This requires standard ffmpeg from homebrew-core.
+        You must uninstall ffmpeg-custom first:
+          brew uninstall ffmpeg-custom
+
+        This will also install standard svt-av1 as a dependency of ffmpeg.
+      EOS
+    else
+      <<~EOS
+        Built with WebM output support enabled.
+
+        This formula conflicts with svt-av1 and is optimized for use with ffmpeg-custom.
+
+        For FFMS2 input support, reinstall with:
+          brew reinstall svt-av1-essential --with-ffms2 --build-from-source
+
+        NOTE: FFMS2 requires uninstalling ffmpeg-custom first and using standard ffmpeg.
+      EOS
+    end
   end
 
   test do
