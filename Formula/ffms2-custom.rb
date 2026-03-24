@@ -1,5 +1,5 @@
 class Ffms2Custom < Formula
-  desc "Libav/ffmpeg based source library and Avisynth plugin (custom build for SVT-AV1)"
+  desc "Libav/ffmpeg based source library and Avisynth plugin (custom build for SVT-AV1-Essential)"
   homepage "https://github.com/FFMS/ffms2"
   url "https://github.com/FFMS/ffms2/archive/refs/tags/5.0.tar.gz"
   sha256 "7770af0bbc0063f9580a6a5c8e7c51f1788f171d7da0b352e48a1e60943a8c3c"
