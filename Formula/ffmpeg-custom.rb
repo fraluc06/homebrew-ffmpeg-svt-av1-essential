@@ -52,7 +52,7 @@ class FfmpegCustom < Formula
   depends_on "snappy"
   depends_on "speex"
   depends_on "srt"
-  depends_on "svt-av1-essential"
+  depends_on "svt-av1-essential-lib"
   depends_on "tesseract"
   depends_on "theora"
   depends_on "webp"
