@@ -38,13 +38,13 @@ class SvtAv1Essential < Formula
 
     # We only want the CLI app from this formula
     # The libraries are provided by svt-av1-essential-lib
-    rm_rf [lib, include]
+    rm_r([lib, include])
   end
 
   test do
     # Verify the binary is present and functional
     assert_match "SVT-AV1-Essential", shell_output("#{bin}/SvtAv1EncApp --version")
-    
+
     # Try to open an empty file to see if FFMS2 support is active
     # (FFMS2 should return an error, but a different one than if it was missing)
     touch "empty.mp4"
