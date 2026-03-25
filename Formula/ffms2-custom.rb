@@ -20,7 +20,15 @@ class Ffms2Custom < Formula
   end
 
   test do
-    # Simple check for the binary
-    system bin/"ffmsindex", "-h"
+    resource "homebrew-videosample" do
+      url "https://samples.mplayerhq.hu/V-codecs/lm20.avi"
+      sha256 "a0ab512c66d276fd3932aacdd6073f9734c7e246c8747c48bf5d9dd34ac8b392"
+    end
+
+    # download small sample and check that the index was created
+    resource("homebrew-videosample").stage do
+      system bin/"ffmsindex", "lm20.avi"
+      assert_path_exists Pathname.pwd/"lm20.avi.ffindex"
+    end
   end
 end
