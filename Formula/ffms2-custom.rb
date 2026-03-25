@@ -11,6 +11,14 @@ class Ffms2Custom < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-custom-5.0"
+    sha256 cellar: :any,                 arm64_tahoe:   "9179b9428b8fe2d7673a3fe93f46da7cd9f81c4094b5b2c8ba5d14b23b39d590"
+    sha256 cellar: :any,                 arm64_sequoia: "c7d17cc982b8a9da5a8569c961bd049631e34176fd65210102e53da436483d4f"
+    sha256 cellar: :any,                 arm64_sonoma:  "8af56e4ea3b65a89b97ba53cd0b27feef37622f54e9fd51be0dd85ca7f3ac4cf"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "42d970ac45a9913417807cc5f2e496c641c011f725dc2c57ca550662f15f00dc"
+  end
+
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
