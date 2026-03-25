@@ -1,22 +1,14 @@
 class FfmpegCustom < Formula
   desc "Play, record, convert, and stream audio and video (with SVT-AV1-Essential)"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-8.1.tar.xz"
-  sha256 "b072aed6871998cce9b36e7774033105ca29e33632be5b6347f3206898e0756a"
+  url "https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz"
+  sha256 "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
   license "GPL-2.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
     url "https://ffmpeg.org/download.html"
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.1"
-    sha256 arm64_tahoe:   "b3d68236c26dba224c2bfacfd420a2ceefae214deb6bdb073fd211a4166f5ce6"
-    sha256 arm64_sequoia: "17e0a474dcef3b3b28af3b1160df47fe7c8dbca53a62c26601affe8af9da33ad"
-    sha256 arm64_sonoma:  "5e881f3c5e261904c056f1b069944be8974c9d99bef7afe6a2ddf7ee0b666f44"
-    sha256 x86_64_linux:  "c2a1aed39996503a01ca39b442bc34cd8ebca71456d02435664db76977c459da"
   end
 
   depends_on "pkgconf" => :build
