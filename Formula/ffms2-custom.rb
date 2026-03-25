@@ -1,16 +1,14 @@
 class Ffms2Custom < Formula
   desc "Libav/ffmpeg based source library and Avisynth plugin"
   homepage "https://github.com/FFMS/ffms2"
-  url "https://github.com/FFMS/ffms2/archive/refs/tags/5.0.tar.gz"
-  sha256 "7770af0bbc0063f9580a6a5c8e7c51f1788f171d7da0b352e48a1e60943a8c3c"
+  url "https://github.com/FFMS/ffms2/archive/refs/tags/2.40.tar.gz"
+  sha256 "82e95662946f3d6e1b529eadbd72bed196adfbc41368b2d50493efce6e716320"
   license "GPL-2.0-or-later"
   head "https://github.com/FFMS/ffms2.git", branch: "master"
 
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-custom-5.0"
-    sha256 cellar: :any, arm64_tahoe:   "774b87a152228952e2a39d84db3d878731c3b8e28fdf50d5b4fc6ebca5ebb5d3"
-    sha256 cellar: :any, arm64_sequoia: "91aedac3846218b21c114fe22cb2476aa12f7937cb188c7ad0ac557fe0f5a830"
-    sha256 cellar: :any, arm64_sonoma:  "233a5e5c05076da555e36b2f75fb2a8b88dc4b1f4c60fd99afb96413bf196e60"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
   depends_on "autoconf" => :build
@@ -18,6 +16,10 @@ class Ffms2Custom < Formula
   depends_on "libtool" => :build
   depends_on "pkgconf" => :build
   depends_on "ffmpeg-custom"
+
+  on_linux do
+    depends_on "zlib-ng-compat"
+  end
 
   conflicts_with "ffms2", because: "both install ffmsindex binary and ffms2 libraries"
 
