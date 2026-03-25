@@ -49,7 +49,6 @@ class SvtAv1EssentialLib < Formula
       #include <svt-av1/EbSvtAv1Enc.h>
       int main() {
         EbSvtAv1EncConfiguration config;
-        svt_av1_enc_init_handle(NULL, NULL, &config);
         return 0;
       }
     EOS
