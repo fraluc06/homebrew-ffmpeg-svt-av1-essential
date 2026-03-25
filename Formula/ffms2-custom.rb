@@ -6,6 +6,13 @@ class Ffms2Custom < Formula
   license "GPL-2.0-or-later"
   head "https://github.com/FFMS/ffms2.git", branch: "master"
 
+  bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-custom-5.0"
+    sha256 cellar: :any, arm64_tahoe:   "774b87a152228952e2a39d84db3d878731c3b8e28fdf50d5b4fc6ebca5ebb5d3"
+    sha256 cellar: :any, arm64_sequoia: "91aedac3846218b21c114fe22cb2476aa12f7937cb188c7ad0ac557fe0f5a830"
+    sha256 cellar: :any, arm64_sonoma:  "233a5e5c05076da555e36b2f75fb2a8b88dc4b1f4c60fd99afb96413bf196e60"
+  end
+
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
