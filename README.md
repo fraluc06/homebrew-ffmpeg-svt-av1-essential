@@ -1,31 +1,11 @@
 # FFmpeg-SVT-AV1-Essential
 
-This Homebrew tap provides high-performance formulae for **SVT-AV1-Essential** and a custom **FFmpeg** build optimized for modern AV1 encoding.
-
-The project uses a "Bootstrapping" approach to resolve dependency loops between FFmpeg, FFMS2, and SVT-AV1, allowing for a fully integrated experience.
+### This Homebrew tap provides formulae for **SVT-AV1-Essential** and a custom **FFmpeg** build bundled with it.
 
 ---
 
 ## Installation
 
-To get the full suite with optimized FFmpeg and SvtAv1EncApp with direct video input support, follow this specific order:
-
-### 1. Install the Shared Library
-```bash
-brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential-lib
-```
-
-### 2. Install Optimized FFmpeg
-```bash
-brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg-custom
-```
-
-### 3. Install Custom FFMS2
-```bash
-brew install fraluc06/ffmpeg-svt-av1-essential/ffms2-custom
-```
-
-### 4. Install the CLI Encoder (with FFMS2 Support)
 ```bash
 brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential
 ```
@@ -59,24 +39,20 @@ ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=10 \
 
 ## Key Features
 
-### ✅ No More Dependency Conflicts
-Unlike previous versions, you can now have **both** optimized `ffmpeg-custom` **and** `SvtAv1EncApp` with direct video input (FFMS2) installed simultaneously.
-
 ### Automatic Bit-Depth Conversion
-Automatically converts input format to YUV420P10 when using 10-bit encoding on 8-bit sources.
+Automatically converts the input format to YUV420P10 when using 10-bit encoding on 8-bit sources.
 
 ### WebM Output (Default)
-Enabled by default. Supports automatic metadata pass-through and encoder parameter embedding specifically for WebM containers.
+Supports automatic metadata pass-through and encoder parameter embedding specifically for WebM containers.
 
 ### Native FFMS2 Input Support
-The `SvtAv1EncApp` can read video formats (MP4, MKV, etc.) directly using our custom FFMS2 build, which is linked to your optimized FFmpeg.
+The `SvtAv1EncApp` can now read video formats (MP4, MKV, etc.) without the need for external tools, thanks to FFMS2 integration.
 
 ---
 
 ## Troubleshooting
 
-If you encounter conflicts with standard Homebrew formulas, you may need to unlink them first:
+If you encounter conflicts with standard Homebrew formulae, please uninstall the ffmpeg from [homebrew-core](https://formulae.brew.sh/formula/ffmpeg) first with the following command:
 ```bash
-brew unlink ffmpeg svt-av1 ffms2
-brew link --overwrite svt-av1-essential-lib ffmpeg-custom ffms2-custom svt-av1-essential
+brew uninstall ffmpeg
 ```
