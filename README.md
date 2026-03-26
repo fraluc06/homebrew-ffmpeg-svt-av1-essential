@@ -43,7 +43,7 @@ SvtAv1EncApp --version
 To verify direct input support, try encoding an MP4 file directly:
 ```bash
 ffmpeg -f lavfi -i testsrc=duration=2:size=640x360:rate=24 -c:v libx264 test.mp4
-SvtAv1EncApp -i test.mp4 -o test.ivf -preset 10
+SvtAv1EncApp --preset 10 -i test.mp4 -b test.ivf
 ```
 
 ### Verify FFmpeg Integration
