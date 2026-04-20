@@ -13,11 +13,11 @@ class FfmpegCustom < Formula
   end
 
   bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.1"
-    sha256 arm64_tahoe:   "dfcbd5005bb30f23cbc3a950d8665eaa299241971b32509a1009376ba71d7f8f"
-    sha256 arm64_sequoia: "0d82e11ad6e48578039fa78370c24595f1322f2997429176dbd6ba6f8dde57c7"
-    sha256 arm64_sonoma:  "0dcacff5baa5765533e4ff7ba71d95e1c772a7a02d558f9f46fad1cc7a97560e"
-    sha256 x86_64_linux:  "c8b95339f80c4d6938c6f404c7c635906dfcb762ad5091e9d0231656954de994"
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.1_1"
+    sha256 arm64_tahoe:   "d182daba49b858d0c0265306e75089d0a3fa422910644104130509ea451eaa6f"
+    sha256 arm64_sequoia: "2733939fc56cf066cd122456adc0806587c1d3e44425d82118f95a28e75edb99"
+    sha256 arm64_sonoma:  "de4249d32ea7553cf13e71be6253152db56063e7729557fa1500cae0295eccf6"
+    sha256 x86_64_linux:  "e00c58fbd34aab4d963bc7556cfc263875835d01dd44a2ec2665630f8452196b"
   end
 
   depends_on "pkgconf" => :build
