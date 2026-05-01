@@ -6,17 +6,24 @@ on:
       - main
   pull_request:
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   test-bot:
+    name: Run tests
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-14, macos-15, macos-26 ]
     runs-on: ${{ matrix.os }}
     permissions:
-      actions: read
-      checks: read
-      contents: read
-      pull-requests: write
+      actions: read # to read artifacts
+      checks: read # to read check results
+      contents: read # to checkout code
+      pull-requests: write # to add labels
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -25,7 +32,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cache Homebrew Bundler RubyGems
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
@@ -41,7 +48,7 @@ jobs:
 
       - name: Upload bottles as artifact
         if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: bottles_${{ matrix.os }}
           path: '*.bottle.*'
@@ -52,10 +59,12 @@ jobs:
     needs: test-bot
     if: github.event_name == 'pull_request' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     permissions:
-      pull-requests: write
+      pull-requests: write # to add labels
     steps:
       - name: Add pr-pull label
         run: |
-          gh pr edit "${{ github.event.pull_request.number }}" --add-label "pr-pull" --repo "${{ github.repository }}"
+          gh pr edit "$PR_NUMBER" --add-label "pr-pull" --repo "$REPOSITORY"
         env:
           GH_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}

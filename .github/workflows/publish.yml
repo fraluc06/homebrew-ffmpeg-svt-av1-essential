@@ -5,16 +5,23 @@ on:
     types:
       - labeled
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   pr-pull:
+    name: Pull bottles
     if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
     runs-on: ubuntu-24.04
     permissions:
-      actions: read
-      checks: read
-      contents: write
-      issues: read
-      pull-requests: write
+      actions: read # to read artifacts
+      checks: read # to read check results
+      contents: write # to push commits
+      issues: read # to read PR labels
+      pull-requests: write # to manage PR
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main

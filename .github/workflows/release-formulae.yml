@@ -10,12 +10,21 @@ on:
   schedule:
     - cron: '0 5 * * 1'
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   bump:
+    name: Bump formulae
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to push commits
     steps:
       - name: Update formulae using Livecheck
-        uses: dawidd6/action-homebrew-bump-formula@v7
+        uses: dawidd6/action-homebrew-bump-formula@1446dca236b0440c6f02723a3f14f13be2c04ab0 # v7
         with:
           token: ${{ secrets.COMMITTER_TOKEN }}
           user_name: "github-actions[bot]"
