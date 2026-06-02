@@ -20,8 +20,9 @@ jobs:
         os: [ macos-15-intel, macos-26 ]
         include:
           - os: ubuntu-latest
-            container: ghcr.io/homebrew/brew@sha256:12f7265dc6ca43aacf3b659825b04a3d160bf682daf0e1337ad1dc6e59b26212 # main
+            container: ghcr.io/homebrew/brew:latest # v5.1.14
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     permissions:
       actions: read # to read artifacts
       checks: read # to read check results
@@ -30,7 +31,7 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@8eb7f2efa6ab636da09aef605b497fd5b8a7587d # main
+        uses: Homebrew/actions/setup-homebrew@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
