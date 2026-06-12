@@ -16,9 +16,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
-
 jobs:
   bump:
     name: Bump formulae
@@ -26,6 +23,12 @@ jobs:
     permissions:
       contents: write # to push commits
     steps:
+      - name: Trust tap
+        run: |
+          mkdir -p ~/.homebrew ~/.config/homebrew
+          echo '{"trustedtaps":["fraluc06/homebrew-ffmpeg-svt-av1-essential","fraluc06/ffmpeg-svt-av1-essential"]}' > ~/.homebrew/trust.json
+          echo '{"trustedtaps":["fraluc06/homebrew-ffmpeg-svt-av1-essential","fraluc06/ffmpeg-svt-av1-essential"]}' > ~/.config/homebrew/trust.json
+
       - name: Update formulae using Livecheck
         uses: dawidd6/action-homebrew-bump-formula@1446dca236b0440c6f02723a3f14f13be2c04ab0 # v7
         with:
