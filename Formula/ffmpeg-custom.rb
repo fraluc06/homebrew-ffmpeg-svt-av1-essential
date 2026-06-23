@@ -5,16 +5,11 @@ class FfmpegCustom < Formula
   sha256 "464beb5e7bf0c311e68b45ae2f04e9cc2af88851abb4082231742a74d97b524c"
   license "GPL-2.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
+  revision 1
 
   livecheck do
     url "https://ffmpeg.org/download.html"
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.1.2"
-    sha256 arm64_tahoe:  "7833967c35e8656b748c7db3df3e4681a6775fde1ec69f1af02e7728d8ff6774"
-    sha256 x86_64_linux: "581ee5128331fa98832328688926c37222b2a704e6f29f2ffb9cba7e9aec15cb"
   end
 
   depends_on "pkgconf" => :build
