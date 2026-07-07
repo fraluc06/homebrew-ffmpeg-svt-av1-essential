@@ -11,12 +11,6 @@ class FfmpegCustom < Formula
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.1.2"
-    sha256 arm64_tahoe:  "7833967c35e8656b748c7db3df3e4681a6775fde1ec69f1af02e7728d8ff6774"
-    sha256 x86_64_linux: "581ee5128331fa98832328688926c37222b2a704e6f29f2ffb9cba7e9aec15cb"
-  end
-
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
@@ -44,6 +38,7 @@ class FfmpegCustom < Formula
   depends_on "opencore-amr"
   depends_on "openjpeg"
   depends_on "opus"
+  depends_on "qrencode"
   depends_on "rav1e"
   depends_on "rubberband"
   depends_on "sdl2-compat"
@@ -111,6 +106,7 @@ class FfmpegCustom < Formula
       --enable-libmp3lame
       --enable-libopus
       --enable-libplacebo
+      --enable-libqrencode
       --enable-librav1e
       --enable-librist
       --enable-librubberband
