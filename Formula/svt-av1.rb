@@ -1,4 +1,4 @@
-class SvtAv1EssentialLib < Formula
+class SvtAv1 < Formula
   desc "SVT-AV1 encoder library (shared) - fork with sensible defaults"
   homepage "https://github.com/nekotrix/SVT-AV1-Essential"
   url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.0.1-Essential.tar.gz"
@@ -10,19 +10,9 @@ class SvtAv1EssentialLib < Formula
     strategy :github_latest
   end
 
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/svt-av1-essential-lib-4.0.1"
-    sha256 cellar: :any,                 arm64_tahoe:   "0f3ded82027d2e2f220dfcc5878d09b7df4b3f9c7ddcdec8a63c24b8cbc85561"
-    sha256 cellar: :any,                 arm64_sequoia: "16dc389d4eda9301edfece35df846f5cad4d7f8364f0a5542a5f58f96cf6b7be"
-    sha256 cellar: :any,                 arm64_sonoma:  "7fe3e96b6a498c08c7a33357890392cd0c935ff66f77e9300973ae9b3096a044"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "15add2b703c3ed70b71daa60c8ecabe761caa0a5af851ea261d0828683c0a4c3"
-  end
-
   depends_on "cmake" => :build
   depends_on "nasm" => :build
   depends_on "pkgconf" => :build
-
-  conflicts_with "svt-av1", because: "both install SVT-AV1 libraries"
 
   def install
     args = %W[
@@ -48,7 +38,7 @@ class SvtAv1EssentialLib < Formula
   def caveats
     <<~EOS
       SVT-AV1-Essential library (shared) has been installed.
-      This library is used by ffmpeg-custom for AV1 encoding.
+      This library is used by ffmpeg for AV1 encoding.
     EOS
   end
 

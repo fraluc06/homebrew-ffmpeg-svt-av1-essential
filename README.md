@@ -1,12 +1,22 @@
 # FFmpeg-SVT-AV1-Essential
 
-### This Homebrew tap provides formulae for **SVT-AV1-Essential** and a custom **FFmpeg** build bundled with it.
+### This Homebrew tap provides standard-named formulae for **FFmpeg** bundled with **SVT-AV1-Essential**, **FFMS2**, and the **SvtAv1EncApp** CLI.
+
+Using standard formula names (`ffmpeg`, `svt-av1`, `ffms2`) ensures that any third-party app or CLI tool installed via Homebrew (e.g. `yt-dlp`, `mpv`, `handbrake`, `vlc`) that depends on `ffmpeg` will seamlessly use this tap's build without formula dependency conflicts.
 
 ---
 
 ## Installation
 
+### Install FFmpeg & SVT-AV1-Essential CLI
 ```bash
+# Tap the repository
+brew tap fraluc06/ffmpeg-svt-av1-essential
+
+# Install FFmpeg (bundled with SVT-AV1-Essential library)
+brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg
+
+# Install SVT-AV1-Essential CLI tool (SvtAv1EncApp)
 brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential
 ```
 
@@ -39,6 +49,9 @@ ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=10 \
 
 ## Key Features
 
+### Standard Homebrew Compatibility
+Formulae match Homebrew core names (`ffmpeg`, `svt-av1`, `ffms2`), satisfying `depends_on "ffmpeg"` for any third-party Homebrew applications.
+
 ### Automatic Bit-Depth Conversion
 Automatically converts the input format to YUV420P10 when using 10-bit encoding on 8-bit sources.
 
@@ -52,7 +65,8 @@ The `SvtAv1EncApp` can now read video formats (MP4, MKV, etc.) without the need 
 
 ## Troubleshooting
 
-If you encounter conflicts with standard Homebrew formulae, please uninstall the ffmpeg from [homebrew-core](https://formulae.brew.sh/formula/ffmpeg) first with the following command:
+If you previously installed standard `ffmpeg` from `homebrew-core`, Homebrew will prompt you to unlink or replace it:
 ```bash
-brew uninstall ffmpeg
+brew unlink ffmpeg
+brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg
 ```

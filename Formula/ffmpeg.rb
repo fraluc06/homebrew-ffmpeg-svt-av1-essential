@@ -1,4 +1,4 @@
-class FfmpegCustom < Formula
+class Ffmpeg < Formula
   desc "Play, record, convert, and stream audio and video (with SVT-AV1-Essential)"
   homepage "https://ffmpeg.org/"
   url "https://ffmpeg.org/releases/ffmpeg-8.1.2.tar.xz"
@@ -10,12 +10,6 @@ class FfmpegCustom < Formula
   livecheck do
     url "https://ffmpeg.org/download.html"
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-custom-8.1.2_1"
-    sha256 arm64_tahoe:  "9714315e07dcb74145c3c13b82db2ad54ebfe6913540a8513a75ca1463f20cf2"
-    sha256 x86_64_linux: "b2ab5d3065d12de2dc1576a037ffa640b717ebedd263929eddbd3540e4fd1755"
   end
 
   depends_on "pkgconf" => :build
@@ -52,7 +46,7 @@ class FfmpegCustom < Formula
   depends_on "snappy"
   depends_on "speex"
   depends_on "srt"
-  depends_on "svt-av1-essential-lib"
+  depends_on "svt-av1"
   depends_on "tesseract"
   depends_on "theora"
   depends_on "webp"
@@ -84,10 +78,7 @@ class FfmpegCustom < Formula
     depends_on "nasm" => :build
   end
 
-  conflicts_with "ffmpeg", because: "both install ffmpeg, ffprobe and ffplay binaries"
   conflicts_with "ffmpeg-full", because: "both install ffmpeg, ffprobe and ffplay binaries"
-
-  # This formula is based on ffmpeg-full.rb (https://github.com/Homebrew/homebrew-core/blob/753d680fe09665bf42e8f93e1d56d17fcd42e387/Formula/f/ffmpeg-full.rb)
 
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
@@ -164,7 +155,7 @@ class FfmpegCustom < Formula
 
   def caveats
     <<~EOS
-      This formula uses svt-av1-essential instead of the standard svt-av1 for optimized AV1 encoding.
+      This formula uses svt-av1 (SVT-AV1-Essential) instead of standard svt-av1 for optimized AV1 encoding.
     EOS
   end
 
