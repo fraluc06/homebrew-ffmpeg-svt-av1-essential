@@ -7,8 +7,7 @@ class Ffmpeg < Formula
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
-    url "https://ffmpeg.org/download.html"
-    regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    formula "ffmpeg"
   end
 
   depends_on "pkgconf" => :build
