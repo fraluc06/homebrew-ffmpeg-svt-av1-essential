@@ -60,8 +60,12 @@ The `SvtAv1EncApp` can now read video formats (MP4, MKV, etc.) without the need 
 
 ## Troubleshooting
 
-If you previously installed standard `ffmpeg` from `homebrew-core`, Homebrew will prompt you to unlink or replace it:
+If you previously installed standard `ffmpeg`, `svt-av1`, or `ffms2` from `homebrew-core`, Homebrew will prompt you to uninstall or replace them:
+
 ```bash
-brew uninstall ffmpeg
-brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg
+brew uninstall --force ffmpeg svt-av1 ffms2
+brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1 \
+             fraluc06/ffmpeg-svt-av1-essential/ffmpeg \
+             fraluc06/ffmpeg-svt-av1-essential/ffms2 \
+             fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential
 ```
