@@ -16,6 +16,7 @@ class Ffmpeg < Formula
   depends_on "aribb24"
   depends_on "dav1d"
   depends_on "fontconfig"
+  depends_on "fraluc06/ffmpeg-svt-av1-essential/svt-av1"
   depends_on "freetype"
   depends_on "frei0r" => :no_linkage
   depends_on "ggml"
@@ -43,7 +44,6 @@ class Ffmpeg < Formula
   depends_on "snappy"
   depends_on "speex"
   depends_on "srt"
-  depends_on "svt-av1"
   depends_on "tesseract"
   depends_on "theora"
   depends_on "webp"

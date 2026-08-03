@@ -15,7 +15,7 @@ class Ffms2 < Formula
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkgconf" => :build
-  depends_on "ffmpeg"
+  depends_on "fraluc06/ffmpeg-svt-av1-essential/ffmpeg"
 
   on_linux do
     depends_on "zlib-ng-compat"

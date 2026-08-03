@@ -13,7 +13,7 @@ class SvtAv1Essential < Formula
   depends_on "cmake" => :build
   depends_on "nasm" => :build
   depends_on "pkgconf" => :build
-  depends_on "ffms2"
+  depends_on "fraluc06/ffmpeg-svt-av1-essential/ffms2"
 
   def install
     args = [
