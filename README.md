@@ -2,17 +2,12 @@
 
 ### This Homebrew tap provides standard-named formulae for **FFmpeg** bundled with **SVT-AV1-Essential**, **FFMS2**, and the **SvtAv1EncApp** CLI.
 
-Using standard formula names (`ffmpeg`, `svt-av1`, `ffms2`) ensures that any third-party app or CLI tool installed via Homebrew (e.g. `yt-dlp`, `mpv`, `handbrake`, `vlc`) that depends on `ffmpeg` will seamlessly use this tap's build without formula dependency conflicts.
-
 ---
 
 ## Installation
 
 ### Install FFmpeg & SVT-AV1-Essential CLI
 ```bash
-# Tap the repository
-brew tap fraluc06/ffmpeg-svt-av1-essential
-
 # Install FFmpeg (bundled with SVT-AV1-Essential library)
 brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg
 
@@ -67,6 +62,6 @@ The `SvtAv1EncApp` can now read video formats (MP4, MKV, etc.) without the need 
 
 If you previously installed standard `ffmpeg` from `homebrew-core`, Homebrew will prompt you to unlink or replace it:
 ```bash
-brew unlink ffmpeg
+brew uninstall ffmpeg
 brew install fraluc06/ffmpeg-svt-av1-essential/ffmpeg
 ```
