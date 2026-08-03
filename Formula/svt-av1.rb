@@ -1,5 +1,5 @@
 class SvtAv1 < Formula
-  desc "SVT-AV1 encoder library (shared) - fork with sensible defaults"
+  desc "AV1 encoder library (shared) - fork with sensible defaults"
   homepage "https://github.com/nekotrix/SVT-AV1-Essential"
   url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.0.1-Essential.tar.gz"
   sha256 "4575b5b50eb6888f358d235e44c6caf1a968812ce2200692b2025e5ea082244b"
