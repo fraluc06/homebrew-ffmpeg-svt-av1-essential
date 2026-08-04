@@ -1,0 +1,39 @@
+name: Update GitHub Actions (pinact)
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  pinact:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      workflows: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run pinact run -u
+        uses: suzuki-shunsuke/pinact-action@896d595f299e71d65b9d28349d6956abe144390a # v3.0.0
+        with:
+          update: "true"
+          skip_push: "true"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.COMMITTER_TOKEN || secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update GitHub Actions via pinact'
+          title: 'chore(deps): update GitHub Actions via pinact'
+          body: |
+            Automated update of SHA-pinned GitHub Actions via `pinact run -u`.
+          branch: pinact-updates
+          delete-branch: true
