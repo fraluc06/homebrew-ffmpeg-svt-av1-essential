@@ -4,17 +4,12 @@ class Ffms2 < Formula
   url "https://github.com/FFMS/ffms2/archive/refs/tags/5.0.tar.gz"
   sha256 "7770af0bbc0063f9580a6a5c8e7c51f1788f171d7da0b352e48a1e60943a8c3c"
   license "GPL-2.0-or-later"
+  revision 1
   head "https://github.com/FFMS/ffms2.git", branch: "master"
 
   livecheck do
     url :stable
     regex(/^v?(\d+(?:\.\d+)+)$/i)
-  end
-
-  bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-5.0"
-    sha256 cellar: :any, arm64_tahoe:  "b8299d36ef73a67ff16fab3b282f4b400410530be643b4f28e90e3e2293e6e5e"
-    sha256 cellar: :any, x86_64_linux: "961e47e7fae4e722f93e0c4bdc27e5ce4b786aec9367286408ffe242a3b5b00f"
   end
 
   depends_on "autoconf" => :build
