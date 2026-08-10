@@ -4,7 +4,6 @@ class Ffmpeg < Formula
   url "https://ffmpeg.org/releases/ffmpeg-9.0.tar.xz"
   sha256 "7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52"
   license "GPL-3.0-or-later"
-  compatibility_version 3
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
