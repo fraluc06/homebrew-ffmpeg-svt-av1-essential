@@ -12,6 +12,12 @@ class Ffms2 < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-5.0_1"
+    sha256 cellar: :any, arm64_tahoe:  "a94af317f66ed210b5f508f4835b5f8b8403e2e10405f180c3353a6b99116a6f"
+    sha256 cellar: :any, x86_64_linux: "5bf9e794ca8048e63d37910af169795e16c1654af0e9b85ad173d6fa4b2484a9"
+  end
+
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
