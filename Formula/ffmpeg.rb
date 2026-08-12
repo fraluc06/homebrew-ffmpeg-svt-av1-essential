@@ -10,6 +10,12 @@ class Ffmpeg < Formula
     formula "ffmpeg"
   end
 
+  bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-9.0"
+    sha256 arm64_tahoe:  "fc9c7502dafdc776dfead5f2d4464ece2f4d7a4f31de26e4982dfda44927997d"
+    sha256 x86_64_linux: "be9cce4305d8730fcd2574f2bf86d2be033f00b071f8e1c09ce3e6f7c6a4d61f"
+  end
+
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
