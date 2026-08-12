@@ -1,9 +1,6 @@
 name: brew pr-pull
 
 on:
-  pull_request_target:
-    types:
-      - labeled
   workflow_dispatch:
     inputs:
       pull_request:
@@ -14,14 +11,13 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pull_request }}
-  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash -xeuo pipefail {0}
 
 jobs:
   pr-pull:
     name: Pull bottles
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'pr-pull')
     runs-on: ubuntu-latest
     permissions:
       actions: read # to read artifacts
@@ -36,13 +32,16 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up git
+        id: git_setup
         uses: Homebrew/actions/git-user-config@fd832223f9f99ebf0244dd20658680e5d4aca049 # 2026.08.03.2
 
       - name: Pull bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git_setup.outputs.name }}
+          HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git_setup.outputs.email }}
           HEAD_SHA: ${{ inputs.head_sha }}
-          PULL_REQUEST: ${{ github.event.pull_request.number || inputs.pull_request }}
+          PULL_REQUEST: ${{ inputs.pull_request }}
         run: |
           if [[ -n "$HEAD_SHA" ]]
           then
@@ -55,9 +54,3 @@ jobs:
         uses: Homebrew/actions/git-try-push@fd832223f9f99ebf0244dd20658680e5d4aca049 # 2026.08.03.2
         with:
           branch: main
-
-      - name: Delete branch
-        if: github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.fork == false
-        env:
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: git push --delete origin "$BRANCH"
