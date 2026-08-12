@@ -33,6 +33,8 @@ class Ffmpeg < Formula
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
+  depends_on "libx11"
+  depends_on "libxcb"
   depends_on "opencore-amr"
   depends_on "openjpeg"
   depends_on "opus"
@@ -65,8 +67,6 @@ class Ffmpeg < Formula
 
   on_linux do
     depends_on "alsa-lib"
-    depends_on "libx11"
-    depends_on "libxcb"
     depends_on "libxext"
     depends_on "libxv"
     depends_on "zlib-ng-compat"
@@ -139,7 +139,7 @@ class Ffmpeg < Formula
     ]
 
     # Needs corefoundation, coremedia, corevideo
-    args += %w[--enable-videotoolbox --enable-audiotoolbox --disable-xlib --disable-libxcb] if OS.mac?
+    args += %w[--enable-videotoolbox --enable-audiotoolbox] if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
 
     system "./configure", *args
