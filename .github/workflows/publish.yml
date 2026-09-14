@@ -1,11 +1,7 @@
+# brew tap-new uses this file to generate a bottle publish workflow for the new tap
 name: brew pr-pull
 
 on:
-  workflow_run:
-    workflows:
-      - brew test-bot
-    types:
-      - completed
   workflow_dispatch:
     inputs:
       pull_request:
@@ -22,69 +18,48 @@ defaults:
 
 jobs:
   pr-pull:
-    name: Pull bottles
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.event == 'pull_request' &&
-        github.event.workflow_run.head_repository.full_name == github.repository
-      )
     runs-on: ubuntu-latest
     permissions:
-      actions: read # to read artifacts
-      checks: read # to read check results
-      contents: write # to push commits
-      issues: read # to read PR labels
-      pull-requests: write # to manage PR
+      actions: read
+      attestations: write
+      checks: read
+      contents: write
+      id-token: write
+      issues: read
+      pull-requests: write
     steps:
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@3cdb78d0f62ad29dd32de765782654f4eedea607 # 2026.08.31.1
+        uses: Homebrew/actions/setup-homebrew@f8d4222eb633e65c2a0157383cf80861fc7fae7f # 2026.09.07.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up git
         id: git_setup
-        uses: Homebrew/actions/git-user-config@3cdb78d0f62ad29dd32de765782654f4eedea607 # 2026.08.31.1
+        uses: Homebrew/actions/git-user-config@f8d4222eb633e65c2a0157383cf80861fc7fae7f # 2026.09.07.1
 
       - name: Pull bottles
+        id: pull_bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git_setup.outputs.name }}
           HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git_setup.outputs.email }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_HEAD_SHA: ${{ inputs.head_sha }}
-          INPUT_PR: ${{ inputs.pull_request }}
-          EVENT_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+          PULL_REQUEST: ${{ inputs.pull_request }}
         run: |
-          PULL_REQUEST="${INPUT_PR:-}"
-          HEAD_SHA="${INPUT_HEAD_SHA:-}"
-
-          if [[ -z "$PULL_REQUEST" && -f "${GITHUB_EVENT_PATH:-}" ]]; then
-            PULL_REQUEST=$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")
-          fi
-
-          if [[ -z "$HEAD_SHA" && -f "${GITHUB_EVENT_PATH:-}" ]]; then
-            HEAD_SHA=$(jq -r '.workflow_run.head_sha // empty' "$GITHUB_EVENT_PATH")
-          fi
-
-          if [[ -z "$PULL_REQUEST" && -n "$EVENT_BRANCH" ]]; then
-            PULL_REQUEST=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$EVENT_BRANCH" --state open --json number -q '.[0].number')
-          fi
-
-          if [[ -z "$PULL_REQUEST" ]]; then
-            echo "Error: Could not determine pull request number." >&2
-            exit 1
-          fi
-
           if [[ -n "$HEAD_SHA" ]]
           then
-            brew pr-pull --debug --tap="$GITHUB_REPOSITORY" --head-sha="$HEAD_SHA" "$PULL_REQUEST"
+            brew pr-pull --debug --retain-bottle-dir --tap="$GITHUB_REPOSITORY" --head-sha="$HEAD_SHA" \
+              "$PULL_REQUEST"
           else
-            brew pr-pull --debug --tap="$GITHUB_REPOSITORY" "$PULL_REQUEST"
+            brew pr-pull --debug --retain-bottle-dir --tap="$GITHUB_REPOSITORY" "$PULL_REQUEST"
           fi
 
+      - name: Generate build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: "${{ steps.pull_bottles.outputs.bottle_path }}/*.tar.gz"
+
       - name: Push commits
-        uses: Homebrew/actions/git-try-push@3cdb78d0f62ad29dd32de765782654f4eedea607 # 2026.08.31.1
+        uses: Homebrew/actions/git-try-push@f8d4222eb633e65c2a0157383cf80861fc7fae7f # 2026.09.07.1
         with:
           branch: main
