@@ -12,6 +12,7 @@ class Ffmpeg < Formula
   end
 
   bottle do
+    rebuild 1
     root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-9.0.1_1"
     sha256 arm64_tahoe:  "90651d4e6ac3821d27c61ceb7a40e030cb6963c5bed0b3b8658c1ab2d83cfa65"
     sha256 x86_64_linux: "4ecf0107fb57a25d3b01693491e3e5e96ee16f5a192061e8daabc3bf9f98449c"
@@ -55,7 +56,7 @@ class Ffmpeg < Formula
   depends_on "tesseract"
   depends_on "theora"
   depends_on "webp"
-  depends_on "whisper-cpp"
+  depends_on "whisper.cpp"
   depends_on "x264"
   depends_on "x265"
   depends_on "xvid"
