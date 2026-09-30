@@ -8,7 +8,8 @@ class Ffmpeg < Formula
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
-    formula "ffmpeg"
+    url "https://ffmpeg.org/download.html"
+    regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
