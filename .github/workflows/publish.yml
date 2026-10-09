@@ -37,6 +37,17 @@ jobs:
         id: git_setup
         uses: Homebrew/actions/git-user-config@e99025eb970cfa124b8284a35463d87426917478 # 2026.09.28.1
 
+      - name: Set up SSH commit signing
+        env:
+          SSH_SIGNING_KEY: ${{ secrets.SSH_SIGNING_KEY }}
+        run: |
+          ssh_key_file="$(mktemp /tmp/ssh-signing-key-XXXXXX)"
+          printf '%s\n' "$SSH_SIGNING_KEY" > "$ssh_key_file"
+          chmod 600 "$ssh_key_file"
+          git config --global gpg.format ssh
+          git config --global user.signingkey "$ssh_key_file"
+          git config --global commit.gpgsign true
+
       - name: Pull bottles
         id: pull_bottles
         env:
