@@ -32,10 +32,21 @@ jobs:
         id: git_setup
         uses: Homebrew/actions/git-user-config@e99025eb970cfa124b8284a35463d87426917478 # 2026.09.28.1
 
+      - name: Set up SSH commit signing
+        env:
+          SSH_SIGNING_KEY: ${{ secrets.SSH_SIGNING_KEY }}
+        run: |
+          ssh_key_file="$(mktemp /tmp/ssh-signing-key-XXXXXX)"
+          printf '%s\n' "$SSH_SIGNING_KEY" > "$ssh_key_file"
+          chmod 600 "$ssh_key_file"
+          git config --global gpg.format ssh
+          git config --global user.signingkey "$ssh_key_file"
+          git config --global commit.gpgsign true
+
       - name: Bump formulae
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git_setup.outputs.name }}
-          HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git_setup.outputs.email }}
+          HOMEBREW_GIT_COMMITTER_NAME: fraluc06-bot
+          HOMEBREW_GIT_COMMITTER_EMAIL: 67560467+fraluc06@users.noreply.github.com
           TAP_NAME: ${{ steps.set-up-homebrew.outputs.tap-name }}
         run: brew bump --no-fork --open-pr --formulae --bump-synced --tap="$TAP_NAME"
