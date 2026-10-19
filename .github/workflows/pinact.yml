@@ -30,6 +30,11 @@ jobs:
           git config --global gpg.format ssh
           git config --global user.signingkey "$ssh_key_file"
           git config --global commit.gpgsign true
+          # Commit identity of the account that owns the signing key:
+          # GitHub marks the commit "Verified" only if the committer
+          # email belongs to that account (not github-actions[bot]).
+          git config --global user.name "Francesco Lucarelli"
+          git config --global user.email "67560467+fraluc06@users.noreply.github.com"
 
       - name: Run pinact run -u
         uses: suzuki-shunsuke/pinact-action@896d595f299e71d65b9d28349d6956abe144390a # v3.0.0
