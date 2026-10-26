@@ -20,22 +20,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up SSH commit signing
-        env:
-          SSH_SIGNING_KEY: ${{ secrets.SSH_SIGNING_KEY }}
-        run: |
-          ssh_key_file="$(mktemp /tmp/ssh-signing-key-XXXXXX)"
-          printf '%s\n' "$SSH_SIGNING_KEY" > "$ssh_key_file"
-          chmod 600 "$ssh_key_file"
-          git config --global gpg.format ssh
-          git config --global user.signingkey "$ssh_key_file"
-          git config --global commit.gpgsign true
-          # Commit identity of the account that owns the signing key:
-          # GitHub marks the commit "Verified" only if the committer
-          # email belongs to that account (not github-actions[bot]).
-          git config --global user.name "Francesco Lucarelli"
-          git config --global user.email "67560467+fraluc06@users.noreply.github.com"
-
       - name: Run pinact run -u
         uses: suzuki-shunsuke/pinact-action@896d595f299e71d65b9d28349d6956abe144390a # v3.0.0
         with:
@@ -45,7 +29,10 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          token: ${{ secrets.COMMITTER_TOKEN || secrets.GITHUB_TOKEN }}
+          # sign-commits only works with GITHUB_TOKEN or a GitHub App token.
+          # A PAT (COMMITTER_TOKEN) would create the PR but leave commits unsigned.
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sign-commits: true
           commit-message: 'chore(deps): update GitHub Actions via pinact'
           title: 'chore(deps): update GitHub Actions via pinact'
           body: |
