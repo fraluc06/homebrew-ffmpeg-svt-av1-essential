@@ -29,13 +29,13 @@ jobs:
       pull-requests: write
     steps:
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # 2026.10.12.1
+        uses: Homebrew/actions/setup-homebrew@d482da0e602890d3160aade42e72c8556103bf04 # 2026.10.26.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up git
         id: git_setup
-        uses: Homebrew/actions/git-user-config@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # 2026.10.12.1
+        uses: Homebrew/actions/git-user-config@d482da0e602890d3160aade42e72c8556103bf04 # 2026.10.26.1
 
       - name: Set up SSH commit signing
         env:
@@ -71,6 +71,6 @@ jobs:
           subject-path: "${{ steps.pull_bottles.outputs.bottle_path }}/*.tar.gz"
 
       - name: Push commits
-        uses: Homebrew/actions/git-try-push@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # 2026.10.12.1
+        uses: Homebrew/actions/git-try-push@d482da0e602890d3160aade42e72c8556103bf04 # 2026.10.26.1
         with:
           branch: main
