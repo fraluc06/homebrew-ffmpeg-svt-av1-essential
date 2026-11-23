@@ -23,7 +23,7 @@ brew install fraluc06/ffmpeg-svt-av1-essential/svt-av1-essential
 ```bash
 SvtAv1EncApp --version
 ```
-*Expected: `SVT-AV1-Essential v4.0.1 (release)`*
+*Expected: `SVT-AV1-Essential v4.3.1 (release)`*
 
 To verify direct input support, try encoding an MP4 file directly:
 ```bash

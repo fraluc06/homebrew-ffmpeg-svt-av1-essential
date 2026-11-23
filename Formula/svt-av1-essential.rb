@@ -1,8 +1,8 @@
 class SvtAv1Essential < Formula
   desc "SVT-AV1 encoder CLI fork with FFMS2 support for direct video input"
   homepage "https://github.com/nekotrix/SVT-AV1-Essential"
-  url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.0.1-Essential.tar.gz"
-  sha256 "4575b5b50eb6888f358d235e44c6caf1a968812ce2200692b2025e5ea082244b"
+  url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.3.1-Essential.tar.gz"
+  sha256 "a36fb1aa52886a1b2ef346a54ebd2014f372b988608a20034138b58f7deace3e"
   license "BSD-2-Clause"
 
   livecheck do
@@ -28,7 +28,7 @@ class SvtAv1Essential < Formula
       "-DCMAKE_INSTALL_PREFIX=#{prefix}",
       "-DBUILD_SHARED_LIBS=OFF",
       "-DBUILD_APPS=ON",
-      "-DBUILD_DEC=OFF",
+      "-DBUILD_TOOLS=ON",
       "-DSVT_AV1_LTO=ON",
       "-DENABLE_AVX512=OFF",
       "-DENABLE_NEON_I8MM=OFF",

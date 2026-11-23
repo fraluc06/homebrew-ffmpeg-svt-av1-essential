@@ -4,7 +4,7 @@ class Ffms2 < Formula
   url "https://github.com/FFMS/ffms2/archive/refs/tags/5.0.tar.gz"
   sha256 "7770af0bbc0063f9580a6a5c8e7c51f1788f171d7da0b352e48a1e60943a8c3c"
   license "GPL-2.0-or-later"
-  revision 1
+  revision 2
   head "https://github.com/FFMS/ffms2.git", branch: "master"
 
   livecheck do
