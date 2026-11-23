@@ -1,8 +1,8 @@
 class SvtAv1 < Formula
   desc "AV1 encoder library (shared) - fork with sensible defaults"
   homepage "https://github.com/nekotrix/SVT-AV1-Essential"
-  url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.0.1-Essential.tar.gz"
-  sha256 "4575b5b50eb6888f358d235e44c6caf1a968812ce2200692b2025e5ea082244b"
+  url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.3.1-Essential.tar.gz"
+  sha256 "a36fb1aa52886a1b2ef346a54ebd2014f372b988608a20034138b58f7deace3e"
   license "BSD-2-Clause"
 
   livecheck do
@@ -28,7 +28,7 @@ class SvtAv1 < Formula
       -DCMAKE_INSTALL_INCLUDEDIR=include
       -DBUILD_SHARED_LIBS=ON
       -DBUILD_APPS=OFF
-      -DBUILD_DEC=OFF
+      -DBUILD_TOOLS=OFF
       -DSVT_AV1_LTO=ON
       -DENABLE_AVX512=OFF
       -DENABLE_NEON_I8MM=OFF
