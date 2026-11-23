@@ -11,10 +11,9 @@ class SvtAv1Essential < Formula
   end
 
   bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/svt-av1-essential-4.0.1"
-    rebuild 1
-    sha256 cellar: :any, arm64_tahoe:  "c8e20313a7c0c279e76f74e512be2ed1d92097cac93cbc4b5f84376355fee6e5"
-    sha256 cellar: :any, x86_64_linux: "87bbee1fcb85c7651cbc0e3c41a1b2bc94a52ab1b33e56b0292f99aaf8a9f8b5"
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/svt-av1-essential-4.3.1"
+    sha256 cellar: :any, arm64_tahoe:  "996207f8672a765f34a149a78aa415048a1de538c1d60bd17c96fab940527999"
+    sha256 cellar: :any, x86_64_linux: "f55fa0efc603d697cc9a17cac2d496d9172be9a260527de16441cd7c91810b23"
   end
 
   depends_on "cmake" => :build
