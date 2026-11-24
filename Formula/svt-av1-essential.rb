@@ -4,6 +4,7 @@ class SvtAv1Essential < Formula
   url "https://github.com/nekotrix/SVT-AV1-Essential/archive/refs/tags/v4.3.1-Essential.tar.gz"
   sha256 "a36fb1aa52886a1b2ef346a54ebd2014f372b988608a20034138b58f7deace3e"
   license "BSD-2-Clause"
+  revision 1
 
   livecheck do
     url :stable
@@ -20,6 +21,8 @@ class SvtAv1Essential < Formula
   depends_on "nasm" => :build
   depends_on "pkgconf" => :build
   depends_on "fraluc06/ffmpeg-svt-av1-essential/ffms2"
+  depends_on "fraluc06/ffmpeg-svt-av1-essential/hdr10plus-rs"
+  depends_on "fraluc06/ffmpeg-svt-av1-essential/libdovi"
 
   def install
     args = [
@@ -28,6 +31,8 @@ class SvtAv1Essential < Formula
       "-DBUILD_SHARED_LIBS=OFF",
       "-DBUILD_APPS=ON",
       "-DBUILD_TOOLS=ON",
+      "-DLIBDOVI_FOUND=ON",
+      "-DLIBHDR10PLUS_RS_FOUND=ON",
       "-DSVT_AV1_LTO=ON",
       "-DENABLE_AVX512=OFF",
       "-DENABLE_NEON_I8MM=OFF",
