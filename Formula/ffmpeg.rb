@@ -13,9 +13,9 @@ class Ffmpeg < Formula
   end
 
   bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-9.0.2_2"
-    sha256 arm64_tahoe:  "f29f0981ea915bbd92ce4e12e66a037183950199de9e14adab32127994eb902b"
-    sha256 x86_64_linux: "15925bd8067a531a7ac01a3fecb6fa40a41884ba99c08bc48860589a93c35871"
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffmpeg-9.1"
+    sha256 arm64_tahoe:  "2bfffff471df977f9026f26cec91f51a2ba41135c244c49393dbc44bb444d032"
+    sha256 x86_64_linux: "d184793330a525cef1a844f3bdfe52994dc726252cfe8e2eccd6fe04c9cc43f4"
   end
 
   depends_on "pkgconf" => :build
