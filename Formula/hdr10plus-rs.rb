@@ -10,6 +10,12 @@ class Hdr10plusRs < Formula
     regex(/^libhdr10plus-(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/hdr10plus-rs-2.1.5"
+    sha256 cellar: :any, arm64_tahoe:  "f32a35b8a1ef3acd07f4b042c86d72926b9580e207290a5d9b00e0bbbf8b8044"
+    sha256 cellar: :any, x86_64_linux: "30503fb809b1f09a43de00d51f33a459543598b9a798e3bfd21ba47e7954d7b1"
+  end
+
   depends_on "cargo-c" => :build
   depends_on "pkgconf" => :build
   depends_on "rust" => :build
