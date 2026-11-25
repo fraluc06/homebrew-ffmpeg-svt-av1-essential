@@ -13,9 +13,9 @@ class Ffms2 < Formula
   end
 
   bottle do
-    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-5.0_2"
-    sha256 cellar: :any, arm64_tahoe:  "599fe21b0ac64e1d26291dff371794b7ad6cf2daa518338022df860540ace05c"
-    sha256 cellar: :any, x86_64_linux: "3082155a73b6a85c5b869810f1ecb3a162759c89ffc74b929a9f5a79d07531f2"
+    root_url "https://github.com/fraluc06/homebrew-ffmpeg-svt-av1-essential/releases/download/ffms2-5.0_3"
+    sha256 cellar: :any, arm64_tahoe:  "62d1f927909998815c9a40027205628103531f232eac8e2c770808ab23ec31be"
+    sha256 cellar: :any, x86_64_linux: "d98fa0008818ed885b5f61f88484bc5f09cfe44d3df6ea1db61a4180b9ee1a79"
   end
 
   depends_on "autoconf" => :build
